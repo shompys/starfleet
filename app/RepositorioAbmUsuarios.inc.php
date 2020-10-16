@@ -38,7 +38,6 @@ class RepositorioAbmUsuarios{
 
         if(isset($conexion)){
             try{
-                //include_once 'RecuperacionClave.inc.php';
 
                 $sql="SELECT * FROM usuarios WHERE us_dni = :dni";
                 $sentencia = $conexion -> prepare ($sql);
