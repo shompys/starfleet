@@ -1,0 +1,388 @@
+
+html, body {
+    min-height: 100% !important;
+}
+
+body {
+    background-color: #f8f9fa;
+    overflow: hidden;
+    max-height: calc(var(--bodyHeight, 1vh) * 100);
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.btn, .btn:focus,.btn:active:focus,.btn.active:focus,
+.btn.focus,.btn:active.focus,.btn.active.focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0px !important;
+}
+
+@media (max-width: 768px) { 
+    .navbar { height: 80px !important; }
+    .navbar-toggler {position: absolute; z-index: 99;}
+    .navbar-brand {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%);
+        font-size: 2rem;
+        color: #f8f9fa !important;
+    }
+    .profile-sidebar {position: relative; top: -50px; }
+    .profile-usermenu .nav-item .nav-link { justify-content: center;}
+}
+
+/* Menu Lines - Ok! */
+.navbar-toggler{
+    padding: 0 !important;
+    width: 24px;
+    height: 34px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none;
+    margin-bottom: 0px;
+}
+.navbar-toggler .line {
+    display: block;
+    width: 19px;
+    height: 2px;
+    border-radius: 1px;
+    background-color: #f8f9fa;
+    margin: 4px auto;
+    transition: .25s ease-in-out;
+}
+.menu-lines-click .line:nth-child(1) {
+    transform: translate3d(0,6px,0) rotate(45deg);
+}
+.menu-lines-click .line:nth-child(2) {
+    opacity: 0;
+}
+.menu-lines-click .line:nth-child(3) {
+    transform: translate3d(0,-6px,0) rotate(-45deg);
+}
+/* Menu Lines - Ok! */
+
+.profile-sidebar {
+    position: relative;
+    height: calc(var(--sidebarHeight, 1vh) * 100);
+    padding: 30px 20px;
+}
+.starfleet {
+    text-align: center;
+    font-size: 2rem;
+    color: #f8f9fa !important;
+}
+.profile-userpic {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border: 3px solid rgba(0,0,0,0.125);
+    border-radius: 50%;
+    background-color: #fff;
+    padding: 4px;
+    margin: 0 auto;
+}
+.profile-userpic:after {
+    content: '';
+    display:inline-block;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 50%;
+    background-clip: content-box;
+    background-size: cover;
+    background-position: top center;
+    background-image: var(--userpic);
+}
+.profile-userinfo {
+    margin: 20px;
+    text-align: center;
+    color: #f8f9fa;
+}
+.profile-userinfo div:nth-child(1) {
+    font-size: 1.2rem;
+}
+.profile-userinfo div:nth-child(2) {
+    font-size: 1rem;
+}
+
+.profile-useractions {
+    position: relative;
+    margin: 25px auto;
+    width: 160px;
+}
+
+/*
+.profile-usermenu {
+    overflow-y: scroll;
+}
+
+#menu {
+    border-radius: 0px;
+    overflow-y: scroll;
+    height: calc(var(--menuHeight) - 515px);
+}
+*/
+
+.profile-usermenu .nav-item .nav-link {
+    display: flex;
+    align-items: center;
+}
+
+.profile-usermenu .nav-item .badge {
+    margin-left: auto;
+}
+.profile-usermenu .nav-item:hover {
+    background-color: rgba(0,0,0,.125);
+}
+
+.profile-usermenu .nav-item .nav-link:hover {
+    text-emphasis: none;
+    cursor: pointer;
+}
+.profile-usermenu .nav-item .nav-link .icon {
+    margin-right: 15px;
+}
+
+.profile-usermenu .nav-item .nav-link.selected {
+    background-color: rgba(0,0,0,.4);
+}
+
+.profile-userversion {
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+.profile-useractions a {
+    text-decoration: none;
+}
+
+.profile-useractions span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0,0,0,.125);
+    text-align: center;
+    position: relative;
+    color: #343a40;
+}
+.profile-useractions span.icon {
+    margin: 0px 0px;
+    color: #343a40;
+}
+.profile-useractions span.icon:hover {
+    cursor: pointer;
+    color: #ffc107;
+    border: 3px solid #ffc107;
+}
+
+
+.profile-useractions div {
+    position: relative;
+}
+.profile-useractions .notification {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+}
+
+/* Custom Scrollbar - Ok! */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.125);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #ffc107;
+}
+/* Custom Scrollbar - Ok! */
+
+.bg {
+    max-height: calc(var(--panelHeight, 1vh) * 100);
+    background-clip: content-box;
+    background-size: cover;
+    background-position: center center;
+    background-image: url("../img/bg5.jpg");
+}
+
+.bg-login {
+    min-height: calc(var(--panelHeight, 1vh) * 100);
+    background-clip: content-box;
+    background-size: cover;
+    background-position: center center;
+    background-image: url("../img/bg5.jpg");
+}
+
+.main-panel {
+    position: relative;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: calc(var(--panelHeight, 1vh) * 100);
+    background: transparent;
+}
+.modal-panel-bg {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0);
+}
+
+.modal-panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+.main-panel h5 {
+    color: #666;
+    font-size: 1.6rem;
+}
+.main-panel .nav-item .nav-link {
+    color: #666;
+}
+.main-panel .dropdown .dropdown-item.active,
+.main-panel .dropdown .dropdown-menu a:hover {
+  color: #fff;
+  background-color: rgba(0,0,0,.125);
+  border-color: #fff;
+}
+
+/* Outline color form, sin afectar el estilo de bootstrap - Ok! */
+.form-control {
+    border-radius: 0px !important;
+}
+.form-control:focus {
+    border-color: #343a40;
+    box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.25);
+}
+.form-error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.form-msg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(1.5em + .75rem + 2px);
+}
+.form-height {
+    height: calc(var(--formHeight, 1vh) * 100);
+    overflow-y: scroll !important;
+    margin-bottom: 5px !important;
+}
+.form-row {
+    margin-bottom: -1px !important;
+}
+/* Outline color form, sin afectar el estilo de bootstrap - Ok! */
+
+/* Loading - Start */
+.loading {
+    /*display: none;*/
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    background: rgba(52, 58, 64, 0.75);
+  }
+  
+  .loading:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -30px;
+    margin-left: -30px;
+    transform: translate(-50%, -50%);
+    box-sizing: content-box;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 5px solid rgba(0,0,0,0.2);
+    border-top: 5px solid #ffc107;
+    animation: animateLoading .4s linear infinite;
+  }
+  
+  @keyframes animateLoading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+  }
+  /* Loading - End */
+  /* Loading Mini - Start */
+.loading-mini {
+    margin: 0 auto;
+    box-sizing: content-box;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 5px solid rgba(0,0,0,0.3);
+    border-top: 5px solid #343a40;
+    animation: animateLoadingMini .4s linear infinite;
+}
+
+@keyframes animateLoadingMini {
+    0% {
+    transform: rotate(0deg);
+    }
+    100% {
+    transform: rotate(360deg);
+    }
+}
+/* Loading Mini - End */
+
+/* Logo - Start */
+.logo {
+    margin: auto;
+    background-image: url('../img/logo.svg');
+    background-position: center center;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    width: 100%;
+    max-width: 200px;
+    height: 40px;
+}
+/* Logo - End */
+
+/* Loader - Start */
+.loader {
+    /*display: none;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    background: #343a40;
+}
+.loader > div {
+    animation: animateLoader 1s infinite alternate;
+}
+@keyframes animateLoader {
+      0% { opacity: 0.20; }
+    100% { opacity: 1.00; }
+}
+/* Loader - End */

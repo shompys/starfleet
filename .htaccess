@@ -1,0 +1,20 @@
+# DO NOT REMOVE THIS LINE AND THE LINES BELLOW SSL_REDIRECT:starfleet.company
+RewriteEngine on
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} (www\.)?starfleet.company
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# DO NOT REMOVE THIS LINE AND THE LINES BELLOW SSL_REDIRECT:starfleet.company
+
+
+#Logout ocultando la ruta Jonaaasss!
+RewriteRule ^logout$ /vistas/logout.php [L]
+
+
+Options All -Indexes
+php_flag output_buffering on
+Options +FollowSymLinks 
+RewriteEngine On 
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f 
+RewriteRule ^.*$ ./index.php 
+

@@ -1,0 +1,4 @@
+.vs*
+app/config.inc.php
+
+cargas.sql
