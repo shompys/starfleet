@@ -1,10 +1,10 @@
 <?php
-include_once 'app/Conexion.inc.php';
-include_once 'app/ControlSesion.inc.php';
-include_once 'app/config.inc.php';
-include_once 'app/Redireccion.inc.php';
-include_once 'app/RepositorioAdministrador.inc.php';
-include_once 'app/ControlCookie.inc.php';
+require_once 'app/Conexion.inc.php';
+require_once 'app/ControlSesion.inc.php';
+require_once 'app/config.inc.php';
+require_once 'app/Redireccion.inc.php';
+require_once 'app/RepositorioAdministrador.inc.php';
+require_once 'app/ControlCookie.inc.php';
 
 /*if(ControlCookie::cookie_iniciada()){
     ControlSesion::iniciar_sesion($_COOKIE['id'],$_COOKIE['usuario']);

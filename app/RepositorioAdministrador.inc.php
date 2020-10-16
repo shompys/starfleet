@@ -34,7 +34,7 @@ class RepositorioAdministrador{
 
         if(isset($conexion)){
             try{
-                include_once 'Administrador.inc.php';
+                require_once 'Administrador.inc.php';
                 $sql = "SELECT * FROM administradores WHERE BINARY adm_usuario = :usuario";
                 $sentencia = $conexion -> prepare($sql);
                 $sentencia -> bindParam(':usuario', $usuario, PDO::PARAM_STR);
@@ -59,7 +59,7 @@ class RepositorioAdministrador{
 
         if(isset($conexion)){
             try{
-                include_once 'Administrador.inc.php';
+                require_once 'Administrador.inc.php';
                 $sql = "SELECT * FROM administradores WHERE id_administrador = :id_administrador";
                 $sentencia = $conexion -> prepare($sql);
                 $sentencia -> bindParam(':id_administrador', $id, PDO::PARAM_STR);

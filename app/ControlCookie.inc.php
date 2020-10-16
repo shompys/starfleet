@@ -6,7 +6,7 @@ class ControlCookie{
         if(session_id() == ''){
             session_start();
         }
-        include_once "config.inc.php";
+        require_once "config.inc.php";
         setcookie('id', $id, time() + 604800,'/');
         setcookie('usuario', $usuario, time() + 604800, '/');
     }

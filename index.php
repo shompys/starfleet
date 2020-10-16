@@ -70,6 +70,6 @@ if(count($partes_ruta) == 3 ){ // sitios que necesito enviarle algo el metodo ge
     }
 }
 
-include_once $ruta_elegida;
+require_once $ruta_elegida;
 
 
