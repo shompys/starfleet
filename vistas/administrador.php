@@ -77,8 +77,8 @@ Conexion::cerrar_conexion();
                             </span>
                         </div>
                         <div>
-                            <a href="scripts/logout.php">
-                            <!--<a href="logout">-->
+                            <!--<a href="scripts/logout.php">-->
+                            <a href="logout">
                                 <span class="icon">
                                     <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-power" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M5.578 4.437a5 5 0 1 0 4.922.044l.5-.866a6 6 0 1 1-5.908-.053l.486.875z"/>

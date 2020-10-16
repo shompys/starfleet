@@ -8,12 +8,20 @@ $(function(){
         }
     });
 
+    $('#configuracion').on('click', function(){
+        globalReset();
+        $('#panel-configuracion').css('z-index', checkModal).css('display','block');
+        $('#panel-configuracion-close').on('click', function(){
+            $('#panel-configuracion').attr('style','display:none');
+        });
+    });
+
     $('#usuarios').on('click', function(){
         globalReset();
         $('#panel-usuarios').css('z-index', checkModal).css('display','block');
         $('#panel-usuarios-close').on('click', function(){
             $('#panel-usuarios').attr('style','display:none');
-        })
+        });
     });
     
     $('#informes').on('click', function(){
@@ -21,7 +29,23 @@ $(function(){
         $('#panel-informes').css('z-index', checkModal).css('display','block');
         $('#panel-informes-close').on('click', function(){
             $('#panel-informes').attr('style','display:none');
-        })
+        });
+    });
+
+    $('#empresas').on('click', function(){
+        globalReset();
+        $('#panel-empresas').css('z-index', checkModal).css('display','block');
+        $('#panel-empresas-close').on('click', function(){
+            $('#panel-empresas').attr('style','display:none');
+        });
+    });
+
+    $('#contratos').on('click', function(){
+        globalReset();
+        $('#panel-contratos').css('z-index', checkModal).css('display','block');
+        $('#panel-contratos-close').on('click', function(){
+            $('#panel-contratos').attr('style','display:none');
+        });
     });
 
     var globalReset = function()
@@ -79,8 +103,20 @@ $(function(){
     function fixHeight()
     {
         var body = $(window).innerHeight() * 0.01;
-        var vh = ($(window).innerHeight() - $('nav').innerHeight()) * 0.01;
-        var mh = ($(window).innerHeight() - ($('nav').innerHeight()*2)) * 0.01;
+        var vh;// = ($(window).innerHeight() - $('nav').innerHeight()) * 0.01;
+
+        var mh;
+        if($(window).width() < 768)
+        {
+            var vh = ($(window).innerHeight() - $('nav').innerHeight()) * 0.01;
+            var mh = ($(window).innerHeight() - ($('nav').innerHeight()*2)) * 0.01;
+        }
+        else
+        {
+            var vh = $(window).innerHeight() * 0.01;
+            var mh = ($(window).innerHeight() - 80) * 0.01;
+        }
+     
         $('body').attr('style','--bodyHeight:' + body + 'px');
         $('.profile-sidebar').attr('style','--sidebarHeight:' + vh + 'px');
         $('.main-panel').attr('style','--panelHeight:' + vh + 'px');
@@ -95,5 +131,26 @@ $(function(){
     });
     
 
+
+
+
+    /**
+     * Userpic Upload Function - Start
+     */
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#imagePreview').css('background-image', 'url('+e.target.result +')');
+                $('#imagePreview').hide();
+                $('#imagePreview').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#imageUpload").change(function() {
+        readURL(this);
+    });
 
 });
