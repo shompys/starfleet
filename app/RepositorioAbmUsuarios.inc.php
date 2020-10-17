@@ -33,27 +33,6 @@ class RepositorioAbmUsuarios{
         return $abm_insertado;
     }
     
-    public static function obtener_id_usuario_por_dni($conexion, $dni){
-        $id_usuario = null;
 
-        if(isset($conexion)){
-            try{
-
-                $sql="SELECT * FROM usuarios WHERE us_dni = :dni";
-                $sentencia = $conexion -> prepare ($sql);
-                $sentencia -> bindParam(':dni', $dni, PDO::PARAM_STR);
-                $sentencia ->execute();
-                $resultado = $sentencia -> fetch();
-
-                if(!empty($resultado)){
-                    $id_usuario = $resultado['id_usuario'];
-                }
-
-            }catch(PDOException $ex){
-                print 'ERROR' . $ex -> getMessage();
-            }
-        }
-        return $id_usuario;
-    }
 
 }

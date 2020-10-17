@@ -34,17 +34,47 @@ class Empresa{
         $this -> em_activo = $em_activo;
         $this -> contrato_id = $contrato_id;
     }
-    //auto getters!!
-    public function __call($name, $arguments){ 
-        $part1 = substr($name, 0, 3);   //extraigo el metodo
-        if($part1 === 'get'){   //compruebo si es get
-            $nameMethod = substr(strtolower($name),3); //extraigo nombre del atributo 
-            if(!isset($this -> $nameMethod)){
-                return 'atributo no existe';
-            }
-            return $this->$nameMethod; // esto es igual al return de un getter!!!
-        }else{
-            return 'el metodo no existe';
-        }
+    
+    public function getId_empresa(){
+        return $this -> id_empresa;
+    }
+    public function getEm_razonsocial(){
+        return $this -> em_razonsocial;
+    }
+    public function getEm_cuit(){
+        return $this -> em_cuit;
+    }
+    public function getEm_calle(){
+        return $this -> em_calle;
+    }
+    public function getEm_altura(){
+        return $this -> em_altura;
+    }
+    public function getEm_piso(){
+        return $this -> em_piso;
+    }
+    public function getEm_dpto(){
+        return $this -> em_dpto;
+    }
+    public function getEm_ciudad(){
+        return $this -> em_ciudad;
+    }
+    public function getEm_pais(){
+        return $this -> em_pais;
+    }
+    public function getEm_cp(){
+        return $this -> em_cp;
+    }
+    public function getEm_tel(){
+        return $this -> em_tel;
+    }
+    public function getEm_email(){
+        return $this -> em_email;
+    }
+    public function getEm_activo(){
+        return $this -> em_activo;
+    }
+    public function getcontrato_id(){
+        return $this -> contrato_id;
     }
 }

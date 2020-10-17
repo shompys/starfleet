@@ -78,6 +78,28 @@ class RepositorioContrato{
         return $id;
     }
 
+    public static function contrato_existe_id($conexion,$contrato_id){
+        $existe = null;
+        if(isset($conexion)){
+            try{
+                $sql = "SELECT id_contrato from contratos WHERE id_contrato = :contrato_id";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':contrato_id', $contrato_id, PDO::PARAM_STR);
+                $sentencia -> execute();
+                $result = $sentencia ->fetchAll();
+                
+                if(count($result)){
+                    $existe = true;
+                }else{
+                    $existe = false;
+                }
+            }catch (PDOException $ex){
+                print 'ERROR' . $ex-> getMessage();
+            }
+        }
+        return $existe;
+    }
+
     
                 
 

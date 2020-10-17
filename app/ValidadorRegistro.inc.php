@@ -347,8 +347,6 @@ class ValidadorRegistro{
     private function validar_empresa_id($empresa_id, $empresa, $conexion){
         if(!$this -> variable_iniciada($empresa_id)){
             return 0;
-        }else{
-            $this -> empresa_id = $empresa_id;
         }
         if(!RepositorioEmpresa::empresa_existe($conexion,$empresa_id,$empresa)){
             return 0;

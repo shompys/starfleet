@@ -198,6 +198,66 @@ header('Content-Type: application/json');
             echo json_encode($alan);
 
         break;
+        case 'form-new-empresa':
+            ControlSesion::sesion_iniciada();
+            $json['status'] = 0;
+
+            foreach($_POST as $key => $value){
+                $objForm[$key] = isset($value) && !empty($value) ? $value : null;
+            }
+            
+            Conexion::abrir_conexion();
+            $conexion = Conexion::obtener_conexion();
+            Conexion::cerrar_conexion();
+            $validador = new ValidadorAltaEmpresas($objForm['ne-razon'],$objForm['ne-cuit'], 
+                                                    $objForm['ne-street'], $objForm['ne-number'], 
+                                                    $objForm['ne-floor'], $objForm['ne-department'], 
+                                                    $objForm['ne-city'], $objForm['ne-country'], 
+                                                    $objForm['ne-cp'], $objForm['ne-phone'], 
+                                                    $objForm['ne-email'], $objForm['ne-active'], 
+                                                    $objForm['ne-contract'], $conexion);
+            
+            
+            if($validador -> registro_valido()){
+                $accion= 'ALTA';
+                $_empresa = new Empresa('', $validador -> getRazonsocial(), $validador -> getCuit(),$validador -> getCalle(), $validador -> getAltura(), $validador -> getPiso(),
+                $validador -> getDpto(), $validador -> getCiudad(), $validador -> getPais(), $validador -> getCp(), $validador -> getTel(), $validador -> getEmail(),
+                $validador -> getActivo(), $validador -> getContrato_id());
+                
+                if(RepositorioEmpresa::insertarEmpresa($conexion, $_empresa)){
+                    
+                    $json['status'] = procesoAbmEmpresas($conexion, $accion, $_empresa -> getEm_cuit()) ? 1 : 0;
+
+                }
+                
+            }
+            
+            $error = array(
+                'ne-razon' => $validador -> getError_razonsocial(),
+                'ne-cuit' => $validador -> getError_cuit(),
+                'ne-street' => $validador -> getError_calle(),
+                'ne-number' => $validador -> getError_altura(),
+                'ne-floor' => $validador -> getError_piso(),
+                'ne-department' => $validador -> getError_dpto(),
+                'ne-city' => $validador -> getError_ciudad(),
+                'ne-country' => $validador -> getError_pais(),
+                'ne-cp' => $validador -> getError_cp(),
+                'ne-phone' => $validador -> getError_tel(),
+                'ne-email' => $validador -> getError_email(),
+                'ne-active' => $validador -> getError_activo(),
+                'ne-contract' => $validador -> getError_contrato_id()
+            );
+            foreach($error as $key => $value){
+                $json[$key] = $value;
+            }
+            echo json_encode($json);
+        break;
+        case 'form-del-empresa':
+
+        break;
+        case 'form-mod-empresa':
+
+        break;
         case 'form-new-user':
             ControlSesion::sesion_iniciada();
             $alan['status'] = 0;
@@ -584,7 +644,6 @@ header('Content-Type: application/json');
             echo json_encode($json);
 
         break;
-        
     }
     function fechaActual(){
         date_default_timezone_set('America/Argentina/Buenos_Aires');
@@ -609,7 +668,7 @@ header('Content-Type: application/json');
         
         $id_administrador = $_SESSION['id_usuario'];
         
-        $id_usuario = RepositorioAbmUsuarios :: obtener_id_usuario_por_dni($conexion, $dni);
+        $id_usuario = RepositorioUsuario :: obtener_id_usuario_por_dni($conexion, $dni);
         $abm_usuario = new AbmUsuarios('',$id_administrador, $id_usuario, $empresa_id, $accion, $fechaActual);
         if(RepositorioAbmUsuarios::insertarAbm($conexion, $abm_usuario)){
             return true;
@@ -617,6 +676,18 @@ header('Content-Type: application/json');
             return false;
         }
         
+    }
+    function procesoAbmEmpresas($conexion, $accion, $cuit){
+        $fecha = fechaActual();
+        $id_administrador = $_SESSION['id_usuario'];
+        $empresa_id = RepositorioEmpresa::obtener_id_empresa_por_cuit($conexion, $cuit);
+        $_abm_empresa = new AbmEmpresas('', $id_administrador, $empresa_id, $accion, $fecha);
+        
+        if(RepositorioAbmEmpresas::insertarAbmEmpresas($conexion,$_abm_empresa)){
+            return true;
+        }else{
+            return false;
+        }
     }
     
     

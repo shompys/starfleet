@@ -2,6 +2,55 @@
 
 class RepositorioEmpresa{
     
+    public static function insertarEmpresa($conexion, $objEmpresa){
+        $insertado = false;
+
+        if(isset($conexion)){
+
+            try{
+                $sql = "INSERT INTO empresas(em_razonsocial, em_cuit, em_calle, em_altura, em_piso, em_dpto, em_ciudad, em_pais, em_cp, em_tel, em_email, em_activo, contrato_id) 
+                        VALUES(:rs, :cuit, :calle, :altura, :piso, :dpto, :ciudad, :pais, :cp, :tel, :email, :activo, :contrato_id )";
+
+                $rs = $objEmpresa -> getEm_razonsocial();
+                $cuit = $objEmpresa -> getEm_cuit();
+                $calle = $objEmpresa -> getEm_calle();
+                $altura = $objEmpresa -> getEm_altura();
+                $piso = $objEmpresa -> getEm_piso();
+                $dpto = $objEmpresa -> getEm_dpto();
+                $ciudad = $objEmpresa -> getEm_ciudad();
+                $pais = $objEmpresa -> getEm_pais();
+                $cp = $objEmpresa -> getEm_cp();
+                $tel = $objEmpresa -> getEm_tel();
+                $email = $objEmpresa -> getEm_email();
+                $activo = $objEmpresa -> getEm_activo();
+                $contrato_id = $objEmpresa -> getContrato_id();
+
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':rs', $rs, PDO::PARAM_STR);
+                $sentencia -> bindParam(':cuit', $cuit, PDO::PARAM_STR);
+                $sentencia -> bindParam(':calle', $calle, PDO::PARAM_STR);
+                $sentencia -> bindParam(':altura', $altura, PDO::PARAM_STR);
+                $sentencia -> bindParam(':piso', $piso, PDO::PARAM_STR);
+                $sentencia -> bindParam(':dpto', $dpto, PDO::PARAM_STR);
+                $sentencia -> bindParam(':ciudad', $ciudad, PDO::PARAM_STR);
+                $sentencia -> bindParam(':pais', $pais, PDO::PARAM_STR);
+                $sentencia -> bindParam(':cp', $cp, PDO::PARAM_STR);
+                $sentencia -> bindParam(':tel', $tel, PDO::PARAM_STR);
+                $sentencia -> bindParam(':email', $email, PDO::PARAM_STR);
+                $sentencia -> bindParam(':activo', $activo, PDO::PARAM_STR);
+                $sentencia -> bindParam(':contrato_id', $contrato_id, PDO::PARAM_STR);
+                
+                
+                $insertado = $sentencia -> execute();
+
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+
+        }
+        return $insertado;
+    }
+
     public static function empresa_existe($conexion,$empresa_id, $empresa){
         $existe = null;
         if(isset($conexion)){
@@ -145,6 +194,105 @@ class RepositorioEmpresa{
             }
         }
         return $act;
+    }
+
+    public static function razonSocialExiste($conexion, $razonsocial){
+        $existe = false;
+
+        if(isset($conexion)){
+
+            try{
+
+                $sql = "SELECT em_razonsocial FROM empresas WHERE em_razonsocial = :razonsocial";
+                $sent = $conexion -> prepare($sql);
+                $sent -> bindParam(':razonsocial', $razonsocial, PDO::PARAM_STR);
+                $sent -> execute();
+                $result = $sent -> fetchAll();
+                
+                if(count($result)){
+                    $existe = true;
+                }else{
+                    $existe = false;
+                }
+                
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+
+        }
+        return $existe;
+    }
+
+    public static function cuitExiste($conexion, $cuit){
+        $existe = false;
+
+        if(isset($conexion)){
+
+            try{
+
+                $sql = "SELECT em_cuit FROM empresas WHERE em_cuit = :cuit";
+                $sent = $conexion -> prepare($sql);
+                $sent -> bindParam(':cuit', $cuit, PDO::PARAM_STR);
+                $sent -> execute();
+                $result = $sent -> fetchAll();
+                
+                if(count($result)){
+                    $existe = true;
+                }else{
+                    $existe = false;
+                }
+                
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+
+        }
+        return $existe;
+    }
+    public static function email_existe($conexion,$email){
+        $existe = false;
+        if(isset($conexion)){
+
+            try{
+                $sql = "SELECT em_email from empresas WHERE em_email = :email ";
+                
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':email', $email, PDO::PARAM_STR);
+                $sentencia -> execute();
+                $resultado = $sentencia ->fetchAll();
+
+                if(count($resultado)){
+                    $existe = true;
+                }else{
+                    $existe = false;
+                }
+            }catch (PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+        }
+        return $existe;
+    }
+    public static function obtener_id_empresa_por_cuit($conexion, $cuit){
+        $id = null;
+
+        if(isset($conexion)){
+            try{
+
+                $sql="SELECT id_empresa FROM empresas WHERE em_cuit = :cuit";
+                $sentencia = $conexion -> prepare ($sql);
+                $sentencia -> bindParam(':cuit', $cuit, PDO::PARAM_STR);
+                $sentencia ->execute();
+                $resultado = $sentencia -> fetch();
+
+                if(!empty($resultado)){
+                    $id = $resultado['id_empresa'];
+                }
+
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+        }
+        return $id;
     }
 
 }
