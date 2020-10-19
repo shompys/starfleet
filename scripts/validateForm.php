@@ -1,10 +1,35 @@
 <?php
-require_once '../autoload.php';
+//require_once '../autoload.php'; no quiere funcionar en hostinger
+require_once '../app/AbmContratos.inc.php';
+require_once '../app/AbmEmpresas.inc.php';
+require_once '../app/AbmUsuarios.inc.php';
+require_once '../app/Administrador.inc.php';
+require_once '../app/Conexion.inc.php';
+require_once '../app/config.inc.php';
+require_once '../app/Contrato.inc.php';
+require_once '../app/ControlCookie.inc.php';
+require_once '../app/ControlSesion.inc.php';
+require_once '../app/Empresa.inc.php';
+require_once '../app/Redireccion.inc.php';
+require_once '../app/RepositorioAbmContratos.inc.php';
+require_once '../app/RepositorioAbmEmpresas.inc.php';
+require_once '../app/RepositorioAbmUsuarios.inc.php';
+require_once '../app/RepositorioAdministrador.inc.php';
+require_once '../app/RepositorioContrato.inc.php';
+require_once '../app/RepositorioEmpresa.inc.php';
+require_once '../app/RepositorioRecuperacionClave.inc.php';
+require_once '../app/RepositorioUsuario.inc.php';
+require_once '../app/Usuario.inc.php';
+require_once '../app/ValidadorAltaEmpresas.inc.php';
+require_once '../app/ValidadorClave.inc.php';
+require_once '../app/ValidadorContratos.inc.php';
+require_once '../app/ValidadorLogin.inc.php';
+require_once '../app/ValidadorModificarEmpresa.inc.php';
+require_once '../app/ValidadorModificarUsuario.inc.php';
+require_once '../app/ValidadorRegistro.inc.php';
+require_once '../app/ValidadorRol.inc.php';
 require_once '../phpmailer/emails.php';
-//header('Content-Type: application/json');
-    //$_POST['usersForm'] = 'form-del-empresa';
-    //$_POST['check'] = 1;
-    //$_POST['de-active'] = 1;
+header('Content-Type: application/json');
 
     if(isset($_POST['requestForm'])){
         $form = $_POST['requestForm'];
@@ -259,22 +284,22 @@ require_once '../phpmailer/emails.php';
             ControlSesion::sesion_iniciada();
             $json['form'] = 'form-del-empresa';
             $json['status'] = 0;
-            foreach($_POST as $key => $value){
-                
-                $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
-            }
+            
+            $check = isset($_POST['empresa-check']) && !empty($_POST['empresa-check']) ? $_POST['empresa-check'] : null;
+            $activo = isset($_POST['de-active']) ? $_POST['de-active'] : null;
 
-            if($dataFront['empresa-check'] !== null){
-                ControlSesion::datito($dataFront['empresa-check']);
+            
+            if($check !== null){
+                ControlSesion::datito($check);
             }
 
             Conexion::abrir_conexion();
             $conexion = Conexion::obtener_conexion();
             Conexion::cerrar_conexion();
 
-            if(RepositorioEmpresa::id_empresa_existe($conexion, $dataFront['empresa-check'])){
+            if(RepositorioEmpresa::id_empresa_existe($conexion, $check)){
                 $json['status'] = 1;
-                $_empresa = RepositorioEmpresa::obtener_objEmpresa($conexion, $dataFront['empresa-check']);
+                $_empresa = RepositorioEmpresa::obtener_objEmpresa($conexion, $check);
                 
                 $json['de-razon'] = $_empresa -> getEm_razonsocial();
                 $json['de-cuit'] = $_empresa -> getEm_cuit();
@@ -292,11 +317,11 @@ require_once '../phpmailer/emails.php';
 
             }
             
-            if($dataFront['empresa-check'] === null){
-                if($dataFront['de-active'] === null){
+            if($check === null){
+                if($activo == '0'){
                     $accion = 'BAJA';
                     if(RepositorioEmpresa::empresa_activa($conexion,$_SESSION['data'])){            
-                        if(RepositorioEmpresa::empresaSetActivo($conexion, $_SESSION['data'], $dataFront['de-active'])){
+                        if(RepositorioEmpresa::empresaSetActivo($conexion, $_SESSION['data'], $activo)){
                             
                             $_abm_empresa = new AbmEmpresas('', $_SESSION['id_usuario'], $_SESSION['data'], $accion, fechaActual());
                             
@@ -380,30 +405,31 @@ require_once '../phpmailer/emails.php';
                                 
                             }
                         }
+                    }else{
+                        $err = array(
+                            'me-razon' => $validador -> getError_razonsocial(),
+                            'me-cuit' => $validador -> getError_cuit(),
+                            'me-street' => $validador -> getError_calle(),
+                            'me-number' => $validador -> getError_altura(),
+                            'me-floor' => $validador -> getError_piso(),
+                            'me-department' => $validador -> getError_dpto(),
+                            'me-city' => $validador -> getError_ciudad(),
+                            'me-country' => $validador -> getError_pais(),
+                            'me-cp' => $validador -> getError_cp(),
+                            'me-phone' => $validador -> getError_tel(),
+                            'me-email' => $validador -> getError_email(),
+                            'me-active' => $validador -> getError_activo(),
+                            'me-contract' => $validador -> getError_contrato_id()
+                        );
+                        foreach($err as $key => $value){
+                            $json[$key] = $value;
+                        }
                     }
                 }else{
                     $json['status'] = 1;
                 }
-                $err = array(
-                    'me-razon' => $validador -> getError_razonsocial(),
-                    'me-cuit' => $validador -> getError_cuit(),
-                    'me-street' => $validador -> getError_calle(),
-                    'me-number' => $validador -> getError_altura(),
-                    'me-floor' => $validador -> getError_piso(),
-                    'me-department' => $validador -> getError_dpto(),
-                    'me-city' => $validador -> getError_ciudad(),
-                    'me-country' => $validador -> getError_pais(),
-                    'me-cp' => $validador -> getError_cp(),
-                    'me-phone' => $validador -> getError_tel(),
-                    'me-email' => $validador -> getError_email(),
-                    'me-active' => $validador -> getError_activo(),
-                    'me-contract' => $validador -> getError_contrato_id()
-                );
-                foreach($err as $key => $value){
-                    $json[$key] = $value;
-                }
             }
-            
+
             echo json_encode($json);
 
         break;
@@ -647,7 +673,7 @@ require_once '../phpmailer/emails.php';
                 $objForm['mu-dni'], $objForm['mu-sex'], $objForm['mu-street'], $objForm['mu-number'], $objForm['mu-floor'], 
                 $objForm['mu-department'], $objForm['mu-city'], $objForm['mu-country'], $objForm['mu-password'], $objForm['mu-password2'], 
                 $permiso, $objForm['mu-company'], $objForm['mu-companyid'], $objForm['mu-active'], $usuarioBd,$conexion
-            );
+                );
             
                 if($validador -> existe_cambio()){
                     
