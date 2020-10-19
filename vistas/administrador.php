@@ -1,10 +1,10 @@
 <?php
-require_once 'app/Conexion.inc.php';
-require_once 'app/ControlSesion.inc.php';
-require_once 'app/config.inc.php';
-require_once 'app/Redireccion.inc.php';
-require_once 'app/RepositorioAdministrador.inc.php';
-require_once 'app/ControlCookie.inc.php';
+include_once 'app/Conexion.inc.php';
+include_once 'app/ControlSesion.inc.php';
+include_once 'app/config.inc.php';
+include_once 'app/Redireccion.inc.php';
+include_once 'app/RepositorioAdministrador.inc.php';
+include_once 'app/ControlCookie.inc.php';
 
 /*if(ControlCookie::cookie_iniciada()){
     ControlSesion::iniciar_sesion($_COOKIE['id'],$_COOKIE['usuario']);
@@ -1419,6 +1419,11 @@ Conexion::cerrar_conexion();
                 {
                     $('.' + form).find('[name="dni-check"]').val('');
                 }
+
+                if($('.' + form).find('[name="empresa-check"]').val() !== '')
+                {
+                    $('.' + form).find('[name="empresa-check"]').val('');
+                }
                 
                 $.ajax({
                     url : 'scripts/validateForm.php',//'ajax.php', // PHP con las funciones ajax
@@ -1473,8 +1478,55 @@ Conexion::cerrar_conexion();
                 return false;
             });
 
-
             $('[name="dni-check"]').on('keyup', function(e){
+
+                //var form = $($(this)[0].form).find('[name="usersForm"]').val();
+                var form = $($(this)[0].form).attr('class');
+                //console.log(form);
+
+                $.ajax({
+                    url : 'scripts/validateForm.php',//'user.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: 'usersForm=' + form + '&' + $(this).serialize(),
+                    success: function(data){
+                        
+                        if(data.status == 1)
+                        {
+                            $.map(data, function(v, k){
+
+                                $('.' + data.form).find('input[type="checkbox"]').each(function(){
+                                    if($(this).prop('name') == k)
+                                    {
+                                        $('[name="' + k + '"]').prop('checked', (v == 1 ? true : false));
+                                    }
+                                });
+
+                                $('.' + data.form).find('select').each(function(){
+                                    if($(this).prop('name') == k)
+                                    {
+                                        $('select[name="' + k + '"]').find('option[value="' + v + '"]').prop('selected', 'selected');
+                                    }
+                                });
+
+                                $('[name="' + k + '"]').val(v);
+
+                            });
+                        }
+                        else
+                        {
+                            $.map(data, function(v, k){
+                                $('[name="' + k + '"]').val(v);
+                            }); 
+                        }
+
+                    }
+                });
+
+                return false;
+            });
+
+            $('[name="empresa-check"]').on('keyup', function(e){
 
                 //var form = $($(this)[0].form).find('[name="usersForm"]').val();
                 var form = $($(this)[0].form).attr('class');

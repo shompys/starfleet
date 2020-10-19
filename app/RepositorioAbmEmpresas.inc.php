@@ -21,7 +21,7 @@ class RepositorioAbmEmpresas{
                 $sentencia -> bindParam( ':abme_accion', $abme_accion, PDO::PARAM_STR);
                 $sentencia -> bindParam( ':abme_fecha', $abme_fecha, PDO::PARAM_STR);
                 $insertado = $sentencia -> execute();
-
+                
             }catch (PDOException $ex){
                 print 'ERROR' . $ex ->getMessage();
             }

@@ -223,6 +223,9 @@ class ValidadorAltaEmpresas{
         if(!$this -> variable_iniciada($contrato_id)){
             return 0; 
         }
+        if(!RepositorioContrato::contrato_existe_id($conexion,$contrato_id)){
+            return 0;
+        }
         return 1;
     }
     public function getRazonsocial(){

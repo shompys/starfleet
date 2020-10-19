@@ -392,8 +392,10 @@ class RepositorioUsuario{
                 $sentencia -> bindParam( ':empresa_id', $empresa, PDO::PARAM_STR);
                 $sentencia -> bindParam( ':dni_', $dni_, PDO::PARAM_STR);
                 
-                $upd = $sentencia -> execute();
-                
+                $result = $sentencia -> execute();
+                if($result === true){
+                    $upd = true;
+                }
             }catch(PDOException $ex){
                 print 'ERROR' . $ex -> getMessage();
             }

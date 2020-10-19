@@ -294,5 +294,132 @@ class RepositorioEmpresa{
         }
         return $id;
     }
+    public static function id_empresa_existe($conexion,$id){
+        $existe = true;
+        if(isset($conexion)){
 
+            try{
+                $sql = "SELECT id_empresa from empresas WHERE id_empresa = :id ";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':id', $id, PDO::PARAM_STR);
+                $sentencia -> execute();
+                $resultado = $sentencia ->fetchAll();
+
+                if(count($resultado)){
+                    $existeDni = true;
+                }else{
+                    $existeDni = false;
+                }
+            }catch (PDOException $ex){
+                print 'ERROR' . $ex->getMessage();
+            }
+        }
+        return $existeDni;
+    }
+
+    public static function obtener_objEmpresa($conexion, $id){ 
+        $empresa = null;
+        
+        if(isset($conexion)){
+            try{
+                $sql= "SELECT * FROM empresas WHERE id_empresa = :id";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':id', $id, PDO::PARAM_STR);
+                $sentencia -> execute();
+                $arr = $sentencia -> fetch();
+                
+                if(!empty($arr)){
+                    $empresa = new Empresa($arr['id_empresa'],
+                    $arr['em_razonsocial'],
+                    $arr['em_cuit'],
+                    $arr['em_calle'],
+                    $arr['em_altura'],
+                    $arr['em_piso'],
+                    $arr['em_dpto'],
+                    $arr['em_ciudad'],
+                    $arr['em_pais'],
+                    $arr['em_cp'],
+                    $arr['em_tel'],
+                    $arr['em_email'],
+                    $arr['em_activo'],
+                    $arr['contrato_id']
+                 );
+                }
+
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+
+        }
+        return $empresa;
+    }
+
+    public static function empresaSetActivo($conexion, $id_empresa, $activo){
+        $status = false;
+        
+        if(isset($conexion)){
+            try{
+                $sql="UPDATE empresas SET em_activo = :activo WHERE id_empresa = :id_empresa ";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':activo', $activo, PDO::PARAM_STR);
+                $sentencia -> bindParam(':id_empresa', $id_empresa, PDO::PARAM_STR);
+                $status = $sentencia -> execute();
+                
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+        }
+        return $status;
+    }
+    public static function update_empresa_id($conexion, $id_empresa, $objEmpresa){
+        $status = false;
+
+        if(isset($conexion)){
+            try{
+                $sql = "UPDATE empresas SET em_razonsocial = :razon, em_cuit = :cuit, em_calle = :calle,
+                        em_altura = :altura, em_piso = :piso, em_dpto = :dpto, em_ciudad = :ciudad, em_pais = :pais,
+                        em_cp = :cp, em_tel = :tel, em_email = :email, em_activo = :activo, contrato_id = :contrato_id 
+                        WHERE id_empresa = :empresa_id";
+                
+                $razon = $objEmpresa -> getEm_razonsocial();
+                $cuit = $objEmpresa -> getEm_cuit();
+                $calle = $objEmpresa -> getEm_calle();
+                $altura = $objEmpresa -> getEm_altura();
+                $piso = $objEmpresa -> getEm_piso();
+                $dpto = $objEmpresa -> getEm_dpto();
+                $ciudad = $objEmpresa -> getEm_ciudad();
+                $pais = $objEmpresa -> getEm_pais();
+                $cp = $objEmpresa -> getEm_cp();
+                $tel = $objEmpresa -> getEm_tel();
+                $email = $objEmpresa -> getEm_email();
+                $activo = $objEmpresa -> getEm_activo();
+                $contrato_id = $objEmpresa -> getcontrato_id();
+                
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':razon', $razon, PDO::PARAM_STR);
+                $sentencia -> bindParam(':cuit', $cuit, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':calle',$calle, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':altura',$altura, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':piso', $piso, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':dpto', $dpto, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':ciudad', $ciudad, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':pais', $pais, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':cp', $cp, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':tel',$tel, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':email', $email, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':activo', $activo, PDO::PARAM_STR); 
+                $sentencia -> bindParam(':contrato_id', $contrato_id, PDO::PARAM_STR);
+                $sentencia -> bindParam(':empresa_id', $id_empresa, PDO::PARAM_STR);
+                $result = $sentencia -> execute();
+                if($result === true){
+                    $status = true;
+                }
+            }catch(PDOException $ex){
+                print 'catch de RE::update_empresa_id : ' . $ex  -> getMessage();
+            }
+        }
+        return $status;
+    }
+
+    
 }
