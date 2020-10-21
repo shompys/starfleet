@@ -393,8 +393,8 @@ class ValidadorModificarUsuario{
                 return 0; //"Debe ser mayor a 2 caracteres";
             }else if(strlen($pais) > 50){
                 return 0;//"La ciudad debe contener maximo 50 caracteres";
-            }else if(!preg_match("/^[\w\.\ ]+$/", $pais)){
-                return 0; //"Formato invalido letras numeros puntos y espacios y "_" ";
+            }else if(!preg_match("/^[a-zA-Z\ ]+$/", $pais)){
+                return 0;
             }
         }
         return 1; //si no existen errores esto devuelve 1

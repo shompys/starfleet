@@ -100,6 +100,28 @@ class RepositorioContrato{
         return $existe;
     }
 
+    public static function obtener_todos_nombres_contratos($conexion){
+        $obj = null;
+
+        if(isset($conexion)){
+            try{
+                $sql="SELECT id_contrato, con_descripcion FROM contratos ORDER BY id_contrato ASC";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> execute();
+                $result = $sentencia -> fetchAll();
+                if(!empty($result)){
+                    
+                    foreach($result as $key => $value){
+                        $obj[$key]= $value;
+                    }
+                }
+                
+            }catch(PDOException $e){
+                'ERROR DE CONTRATO_EXISTE_iD: ' . $e -> getMessage();
+            }
+        }
+        return $obj;
+    }
     
                 
 

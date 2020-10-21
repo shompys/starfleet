@@ -1,10 +1,11 @@
 <?php
-include_once 'app/Conexion.inc.php';
-include_once 'app/ControlSesion.inc.php';
-include_once 'app/config.inc.php';
-include_once 'app/Redireccion.inc.php';
-include_once 'app/RepositorioAdministrador.inc.php';
-include_once 'app/ControlCookie.inc.php';
+require_once 'app/Conexion.inc.php';
+require_once 'app/ControlSesion.inc.php';
+require_once 'app/config.inc.php';
+require_once 'app/Redireccion.inc.php';
+require_once 'app/RepositorioAdministrador.inc.php';
+require_once 'app/RepositorioContrato.inc.php';
+require_once 'app/ControlCookie.inc.php';
 
 /*if(ControlCookie::cookie_iniciada()){
     ControlSesion::iniciar_sesion($_COOKIE['id'],$_COOKIE['usuario']);
@@ -21,6 +22,9 @@ if(!RepositorioAdministrador::verificar_rol(Conexion::obtener_conexion(), $_SESS
     Conexion::cerrar_conexion();
     Redireccion::redirigir(RUTA_INICIO);
 }
+$_typeContract = RepositorioContrato::obtener_todos_nombres_contratos(Conexion::obtener_conexion());
+
+
 Conexion::cerrar_conexion();
 
 ?>
@@ -1062,9 +1066,13 @@ Conexion::cerrar_conexion();
                                                         <div class="form-group col-md-6">
                                                             <label>Tipo de Contrato</label>
                                                             <select class="form-control" name="ne-contract">
-                                                                <option value="1">Básico</option>
-                                                                <option value="1">Pro</option>
-                                                                <option value="1">Premium</option>
+                                                            <?php 
+                                                                if(count($_typeContract) >= 1){
+                                                                    foreach($_typeContract as $v){
+                                                                        echo '<option value=', $v['id_contrato'] ,'>', $v['con_descripcion'], '</option>';
+                                                                    }
+                                                                }
+                                                            ?>    
                                                             </select>
                                                         </div>
                                                         <div class="form-group col-md-6">
@@ -1252,9 +1260,13 @@ Conexion::cerrar_conexion();
                                                         <div class="form-group col-md-6">
                                                             <label>Tipo de Contrato</label>
                                                             <select class="form-control" name="me-contract">
-                                                                <option value="1">Básico</option>
-                                                                <option value="1">Pro</option>
-                                                                <option value="1">Premium</option>
+                                                            <?php 
+                                                                if(count($_typeContract) >= 1){
+                                                                    foreach($_typeContract as $v){
+                                                                        echo '<option value=', $v['id_contrato'] ,'>', $v['con_descripcion'], '</option>';
+                                                                    }
+                                                                }
+                                                            ?>  
                                                             </select>
                                                         </div>
                                                         <div class="form-group col-md-6">

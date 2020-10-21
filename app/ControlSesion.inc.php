@@ -44,4 +44,12 @@ class ControlSesion{
         }
         $_SESSION['data'] = $almacenar;
     }    
+    public static function destruirDatito(){
+        if(session_id() == ''){
+            session_start();
+        }
+        if(isset($_SESSION['data'])){
+            unset($_SESSION['data']);
+        }
+    }
 }

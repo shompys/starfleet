@@ -174,14 +174,14 @@ class RepositorioEmpresa{
         return $cantReg;
     }
 
-    public static function empresa_activa($conexion,$empresa_id){
+    public static function empresa_activa_por_razon($conexion,$razon){
         $act = false;
         if(isset($conexion)){
 
             try{
-                $sql = "SELECT em_activo from empresas WHERE id_empresa = :empresa_id";
+                $sql = "SELECT em_activo from empresas WHERE em_razonsocial = :razon";
                 $sentencia = $conexion -> prepare($sql);
-                $sentencia -> bindParam(':empresa_id', $empresa_id, PDO::PARAM_STR);
+                $sentencia -> bindParam(':razon', $razon, PDO::PARAM_STR);
                 $sentencia -> execute();
                 $resultado = $sentencia ->fetch();
                 if($resultado['em_activo'] === '1'){
@@ -294,14 +294,15 @@ class RepositorioEmpresa{
         }
         return $id;
     }
-    public static function id_empresa_existe($conexion,$id){
+    /*
+    public static function id_empresa_existe($conexion,$razon){
         $existe = true;
         if(isset($conexion)){
 
             try{
-                $sql = "SELECT id_empresa from empresas WHERE id_empresa = :id ";
+                $sql = "SELECT em_razonsocial from empresas WHERE em_razonsocial = :razon ";
                 $sentencia = $conexion -> prepare($sql);
-                $sentencia -> bindParam(':id', $id, PDO::PARAM_STR);
+                $sentencia -> bindParam(':razon', $razon, PDO::PARAM_STR);
                 $sentencia -> execute();
                 $resultado = $sentencia ->fetchAll();
 
@@ -316,15 +317,15 @@ class RepositorioEmpresa{
         }
         return $existeDni;
     }
-
-    public static function obtener_objEmpresa($conexion, $id){ 
+    */
+    public static function obtener_objEmpresa($conexion, $razon){ 
         $empresa = null;
         
         if(isset($conexion)){
             try{
-                $sql= "SELECT * FROM empresas WHERE id_empresa = :id";
+                $sql= "SELECT * FROM empresas WHERE em_razonsocial = :razon";
                 $sentencia = $conexion -> prepare($sql);
-                $sentencia -> bindParam(':id', $id, PDO::PARAM_STR);
+                $sentencia -> bindParam(':razon', $razon, PDO::PARAM_STR);
                 $sentencia -> execute();
                 $arr = $sentencia -> fetch();
                 
@@ -354,15 +355,15 @@ class RepositorioEmpresa{
         return $empresa;
     }
 
-    public static function empresaSetActivo($conexion, $id_empresa, $activo){
+    public static function empresaSetActivo($conexion, $razon, $activo){
         $status = false;
         
         if(isset($conexion)){
             try{
-                $sql="UPDATE empresas SET em_activo = :activo WHERE id_empresa = :id_empresa ";
+                $sql="UPDATE empresas SET em_activo = :activo WHERE em_razonsocial = :razon ";
                 $sentencia = $conexion -> prepare($sql);
                 $sentencia -> bindParam(':activo', $activo, PDO::PARAM_STR);
-                $sentencia -> bindParam(':id_empresa', $id_empresa, PDO::PARAM_STR);
+                $sentencia -> bindParam(':razon', $razon, PDO::PARAM_STR);
                 $status = $sentencia -> execute();
                 
             }catch(PDOException $ex){

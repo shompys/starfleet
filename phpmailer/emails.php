@@ -207,4 +207,52 @@
 
         }
 
+        public static function aviso_nueva_empresa($objEmpresa){
+            $send = false;
+            $mail = new PHPMailer(true);
+            try{
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                    )
+                );
+                $mail->SMTPDebug = 0;//SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+                $mail->isSMTP();                                            // Send using SMTP
+                $mail->Host       = NOMBRE_HOST;                      // El mail que utilizo
+                $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+                $mail->Username   = NOMBRE_MAIL;                // SMTP mail de la web
+                $mail->Password   = CLAVE_MAIL;                        // SMTP password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+                $mail->Port       = 587;
+                
+                $mail->setFrom(NOMBRE_MAIL, 'StarFleet');
+                $mail->addAddress(NOMBRE_MAIL_ADMIN);
+
+                $mail->isHTML(true);                                                            // Set email format to HTML
+                $mail->Subject = 'SOLICITUD DE EMPRESA NUEVA ALTA';                                // Asunto
+                $mail->Body    = 'DATOS DE LA EMPRESA VALIDOS <br>
+                RAZON SOCIAL: ' . $objEmpresa -> getRazonsocial() . '<br>' . '
+                CUIT: ' . $objEmpresa -> getCuit() . '<br>' . '
+                CALLE: ' . $objEmpresa -> getCalle() . '<br>' . '
+                ALTURA: ' . $objEmpresa -> getAltura() . '<br>' . '
+                PISO: ' . $objEmpresa -> getPiso() . '<br>' . '
+                DPTO: ' . $objEmpresa -> getDpto() . '<br>' . '
+                CIUDAD: ' . $objEmpresa -> getCiudad() . '<br>' . '
+                PAIS: ' . $objEmpresa -> getPais() . '<br>' . '
+                CP: ' . $objEmpresa -> getCp() . '<br>' . '
+                TEL: ' . $objEmpresa -> getTel() . '<br>' . '
+                EMAIL: ' . $objEmpresa -> getEmail() . '<br>' . '
+                TIPO CONTRATO: ' . $objEmpresa -> getContrato_id() . '<br>' 
+                ;
+
+                $send = $mail -> send();
+
+            }catch (Exception $e){
+                echo "El mensaje no salio porque: {$mail->ErrorInfo}";
+            }
+            return $send;
+        }
+
     }

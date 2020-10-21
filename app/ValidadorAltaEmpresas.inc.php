@@ -167,8 +167,8 @@ class ValidadorAltaEmpresas{
             return 0; 
         }else if(strlen($pais) > 50){
             return 0;
-        }else if(!preg_match("/^[\w\.\ ]+$/", $pais)){
-            return 0; //"Formato invalido letras numeros puntos y espacios y "_" ";
+        }else if(!preg_match("/^[a-zA-Z\ ]+$/", $pais)){
+            return 0;
         }
         return 1; 
     }
