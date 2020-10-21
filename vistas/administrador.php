@@ -1071,6 +1071,8 @@ Conexion::cerrar_conexion();
                                                                     foreach($_typeContract as $v){
                                                                         echo '<option value=', $v['id_contrato'] ,'>', $v['con_descripcion'], '</option>';
                                                                     }
+                                                                }else{
+                                                                    ?><option value="">Nulo</option><?php
                                                                 }
                                                             ?>    
                                                             </select>
@@ -1265,6 +1267,8 @@ Conexion::cerrar_conexion();
                                                                     foreach($_typeContract as $v){
                                                                         echo '<option value=', $v['id_contrato'] ,'>', $v['con_descripcion'], '</option>';
                                                                     }
+                                                                }else{
+                                                                    ?><option value="">Nulo</option><?php 
                                                                 }
                                                             ?>  
                                                             </select>

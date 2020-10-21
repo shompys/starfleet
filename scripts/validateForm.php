@@ -29,7 +29,7 @@ require_once '../app/ValidadorModificarUsuario.inc.php';
 require_once '../app/ValidadorRegistro.inc.php';
 require_once '../app/ValidadorRol.inc.php';
 require_once '../phpmailer/emails.php';
-//header('Content-Type: application/json');
+header('Content-Type: application/json');
 
     if(isset($_POST['requestForm'])){
         $form = $_POST['requestForm'];
@@ -313,7 +313,7 @@ require_once '../phpmailer/emails.php';
                 $json['de-phone'] = $_empresa -> getEm_tel();
                 $json['de-email'] = $_empresa -> getEm_email();
                 $json['de-active'] = $_empresa -> getEm_activo();
-                $json['de-contrat'] = $_empresa -> getContrato_id();
+                $json['de-contract'] = $_empresa -> getContrato_id();
 
             }
             

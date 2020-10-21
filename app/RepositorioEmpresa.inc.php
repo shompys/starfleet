@@ -173,6 +173,27 @@ class RepositorioEmpresa{
         }
         return $cantReg;
     }
+    public static function empresa_activa($conexion,$id){
+        $act = false;
+        if(isset($conexion)){
+
+            try{
+                $sql = "SELECT em_activo from empresas WHERE id_empresa = :id";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':id', $id, PDO::PARAM_STR);
+                $sentencia -> execute();
+                $resultado = $sentencia ->fetch();
+                if($resultado['em_activo'] === '1'){
+                    $act = true;
+                }else{
+                    $act = false;
+                }
+            }catch (PDOException $ex){
+                print 'ERROR' . $ex-> getMessage();
+            }
+        }
+        return $act;
+    }
 
     public static function empresa_activa_por_razon($conexion,$razon){
         $act = false;
