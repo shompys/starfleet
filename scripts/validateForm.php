@@ -283,7 +283,7 @@ header('Content-Type: application/json');
         case 'form-del-empresa':
             ControlSesion::sesion_iniciada();
             $json['form'] = 'form-del-empresa';
-            $json['status'] = 0;
+            $json['status'] = 1;
             
             $check = isset($_POST['empresa-check']) && !empty($_POST['empresa-check']) ? $_POST['empresa-check'] : null;
             $activo = isset($_POST['de-active']) ? $_POST['de-active'] : null;
@@ -541,6 +541,7 @@ header('Content-Type: application/json');
         case 'form-del-user':
             ControlSesion::sesion_iniciada();
             $json['form'] = 'form-del-user';
+            $json['status'] = 1;
             $search = isset($_POST['dni-check']) && !empty($_POST['dni-check'])  ? $_POST['dni-check'] : null;
             $activo = isset($_POST['du-active']) ? $_POST['du-active'] : null;
             if($search !== null){
