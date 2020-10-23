@@ -30,7 +30,7 @@ require_once '../app/ValidadorRegistro.inc.php';
 require_once '../app/ValidadorRol.inc.php';
 require_once '../phpmailer/emails.php';
 header('Content-Type: application/json');
-
+    
     if(isset($_POST['requestForm'])){
         $form = $_POST['requestForm'];
     }
@@ -332,7 +332,7 @@ header('Content-Type: application/json');
                         }
                     }
                 }
-                ControlSesion::destruirDatito();
+                
             }
 
             echo json_encode($json);
@@ -371,67 +371,71 @@ header('Content-Type: application/json');
 
             }
             
-            if($dataFront['empresa-check'] === null && isset($_SESSION['data'])){
-
+            if($dataFront['empresa-check'] === null && isset($_SESSION['data']) && count($_POST) > 2){
+                $json['status'] = 1;
                 $_empresaBd = RepositorioEmpresa::obtener_objEmpresa($conexion, $_SESSION['data']);
                 
-                foreach($_POST as $key => $value){
-                    $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
-                }
-                $validador = new ValidadorModificarEmpresa($_empresaBd, $conexion, $dataFront['me-razon'], $dataFront['me-cuit'], 
-                $dataFront['me-street'], $dataFront['me-number'], $dataFront['me-floor'], $dataFront['me-department'], 
-                $dataFront['me-city'], $dataFront['me-country'], $dataFront['me-cp'], $dataFront['me-phone'], $dataFront['me-email'], 
-                $dataFront['me-active'], $dataFront['me-contract']);
-
-                if($validador -> existe_cambio()){
-                    if($validador -> registro_valido()){
-
-                        $accion="MODIFICADO";
-                        $_empresa = new Empresa('',$validador -> getrazonsocial(), $validador -> getcuit(),
-                        $validador -> getcalle(), $validador -> getaltura(), $validador -> getpiso(), $validador -> getdpto(),
-                        $validador -> getciudad(), $validador -> getpais(), $validador -> getcp(), $validador -> gettel(),
-                        $validador -> getemail(), $validador -> getactivo(), $validador -> getContrato_id());
-                        
-                        $empresaModify = RepositorioEmpresa:: update_empresa_id($conexion, $_empresaBd -> getId_empresa(), $_empresa);
-                        if($empresaModify){
-
-                            $_abm_empresa = new AbmEmpresas('', $_SESSION['id_usuario'], $_empresaBd -> getId_empresa(), $accion, fechaActual());
-                            
-                            if(RepositorioAbmEmpresas::insertarAbmEmpresas($conexion, $_abm_empresa)){
-                                
-                                if($_empresaBd -> getEM_Activo() == '0'){
-                                    emails::aviso_alta_empresa($_empresa);
-                                }else{
-                                    emails::aviso_modificado_empresa($_empresa);
-                                }
-                                $json['status'] = 1;
-                                
-                            }
-                        }
-                    }else{
-                        $err = array(
-                            'me-razon' => $validador -> getError_razonsocial(),
-                            'me-cuit' => $validador -> getError_cuit(),
-                            'me-street' => $validador -> getError_calle(),
-                            'me-number' => $validador -> getError_altura(),
-                            'me-floor' => $validador -> getError_piso(),
-                            'me-department' => $validador -> getError_dpto(),
-                            'me-city' => $validador -> getError_ciudad(),
-                            'me-country' => $validador -> getError_pais(),
-                            'me-cp' => $validador -> getError_cp(),
-                            'me-phone' => $validador -> getError_tel(),
-                            'me-email' => $validador -> getError_email(),
-                            'me-active' => $validador -> getError_activo(),
-                            'me-contract' => $validador -> getError_contrato_id()
-                        );
-                        foreach($err as $key => $value){
-                            $json[$key] = $value;
-                        }
+                if($_empresaBd !== null){
+                    
+                    foreach($_POST as $key => $value){
+                        $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
                     }
-                }else{
-                    $json['status'] = 1;
+                    $validador = new ValidadorModificarEmpresa($_empresaBd, $conexion, $dataFront['me-razon'], $dataFront['me-cuit'], 
+                    $dataFront['me-street'], $dataFront['me-number'], $dataFront['me-floor'], $dataFront['me-department'], 
+                    $dataFront['me-city'], $dataFront['me-country'], $dataFront['me-cp'], $dataFront['me-phone'], $dataFront['me-email'], 
+                    $dataFront['me-active'], $dataFront['me-contract']);
+
+                    if($validador -> existe_cambio()){
+                        
+                        if($validador -> registro_valido()){
+
+                            $accion="MODIFICADO";
+                            $_empresa = new Empresa('',$validador -> getrazonsocial(), $validador -> getcuit(),
+                            $validador -> getcalle(), $validador -> getaltura(), $validador -> getpiso(), $validador -> getdpto(),
+                            $validador -> getciudad(), $validador -> getpais(), $validador -> getcp(), $validador -> gettel(),
+                            $validador -> getemail(), $validador -> getactivo(), $validador -> getContrato_id());
+                            
+                            $empresaModify = RepositorioEmpresa:: update_empresa_id($conexion, $_empresaBd -> getId_empresa(), $_empresa);
+                            if($empresaModify){
+
+                                $_abm_empresa = new AbmEmpresas('', $_SESSION['id_usuario'], $_empresaBd -> getId_empresa(), $accion, fechaActual());
+                                
+                                if(RepositorioAbmEmpresas::insertarAbmEmpresas($conexion, $_abm_empresa)){
+                                    
+                                    if($_empresaBd -> getEM_Activo() == '0'){
+                                        emails::aviso_alta_empresa($_empresa);
+                                    }else{
+                                        emails::aviso_modificado_empresa($_empresa);
+                                    }
+                                    $json['status'] = 1;
+                                    
+                                }
+                            }
+                        }else{
+                            $json['status'] = 0;
+                        }
+
+                    }//cierra existe_cambio
+                    $err = array(
+                        'me-razon' => $validador -> getError_razonsocial(),
+                        'me-cuit' => $validador -> getError_cuit(),
+                        'me-street' => $validador -> getError_calle(),
+                        'me-number' => $validador -> getError_altura(),
+                        'me-floor' => $validador -> getError_piso(),
+                        'me-department' => $validador -> getError_dpto(),
+                        'me-city' => $validador -> getError_ciudad(),
+                        'me-country' => $validador -> getError_pais(),
+                        'me-cp' => $validador -> getError_cp(),
+                        'me-phone' => $validador -> getError_tel(),
+                        'me-email' => $validador -> getError_email(),
+                        'me-active' => $validador -> getError_activo(),
+                        'me-contract' => $validador -> getError_contrato_id()
+                    );
+                    foreach($err as $key => $value){
+                        $json[$key] = $value;
+                    }
+                
                 }
-                ControlSesion::destruirDatito();
             }
 
             echo json_encode($json);
@@ -596,7 +600,7 @@ header('Content-Type: application/json');
                         }
                     } 
                 }
-                ControlSesion::destruirDatito();
+                
             }
             
             echo json_encode($json);
@@ -606,7 +610,7 @@ header('Content-Type: application/json');
             ControlSesion::sesion_iniciada();
             $json['form'] = 'form-mod-user';
             $json['status'] = 0;
-            $search = isset($_POST['dni-check']) && !empty($_POST['dni-check'])  ? $_POST['dni-check'] : null;
+            $search = isset($_POST['dni-check']) && !empty($_POST['dni-check']) ? $_POST['dni-check'] : null;
 
             if($search !== null){
                 ControlSesion::datito($search); //no viste nada guiño guiño
@@ -649,138 +653,137 @@ header('Content-Type: application/json');
                     $json['mu-companyid'] = $resultado -> getEmpresa_id();
                     $json['mu-active'] = $resultado -> getUs_Activo();
                     $json['mu-company'] = $empresaName;
-                    $json['dni-check'] = $search;
-                   
             }
-            //-----------------------------------------------------------------------------------------------------
-            if($search === null && isset($_SESSION['data'])){
-                
-                $usuarioBd = RepositorioUsuario::buscar_usuarios_dni($conexion, $_SESSION['data']);
-                
-                foreach($_POST as $key => $value){
-                    $objForm[$key] = isset($value) && !empty($value) ? $value : null;
-
-                    if(substr($key, 2, 6) === '-perm-'){
-                        $checks [] = substr($key,8) . ':' . $value; 
-                    }
-
-                }
-                
-                $permiso = isset($checks) ? implode(',', $checks) : null;
-                
-                if($objForm['mu-sex'] == 1){
-                    $objForm['mu-sex'] = 'M';
-                }else{
-                    $objForm['mu-sex'] = 'F';
-                }
-                
-                $validador = new ValidadorModificarUsuario($objForm['mu-name'], $objForm['mu-lastname'], $objForm['mu-username'], $objForm['mu-email'], $objForm['mu-birth'],
-                $objForm['mu-dni'], $objForm['mu-sex'], $objForm['mu-street'], $objForm['mu-number'], $objForm['mu-floor'], 
-                $objForm['mu-department'], $objForm['mu-city'], $objForm['mu-country'], $objForm['mu-password'], $objForm['mu-password2'], 
-                $permiso, $objForm['mu-company'], $objForm['mu-companyid'], $objForm['mu-active'], $usuarioBd,$conexion
-                );
             
-                if($validador -> existe_cambio()){
+            //-----------------------------------------------------------------------------------------------------
+            if($search === null && isset($_SESSION['data']) && count($_POST) > 2){
+
+
+                $usuarioBd = RepositorioUsuario::buscar_usuarios_dni($conexion, $_SESSION['data']);
+                if($usuarioBd !== null){
                     
-                    if($validador -> registro_valido()){
+                
+                    foreach($_POST as $key => $value){
+                        $objForm[$key] = isset($value) && !empty($value) ? $value : null;
+
+                        if(substr($key, 2, 6) === '-perm-'){
+                            $checks [] = substr($key,8) . ':' . $value; 
+                        }
+
+                    }
+                    
+                    $permiso = isset($checks) ? implode(',', $checks) : null;
+                    
+                    if($objForm['mu-sex'] == 1){
+                        $objForm['mu-sex'] = 'M';
+                    }else{
+                        $objForm['mu-sex'] = 'F';
+                    }
+                    
+                    $validador = new ValidadorModificarUsuario($objForm['mu-name'], $objForm['mu-lastname'], $objForm['mu-username'], $objForm['mu-email'], $objForm['mu-birth'],
+                    $objForm['mu-dni'], $objForm['mu-sex'], $objForm['mu-street'], $objForm['mu-number'], $objForm['mu-floor'], 
+                    $objForm['mu-department'], $objForm['mu-city'], $objForm['mu-country'], $objForm['mu-password'], $objForm['mu-password2'], 
+                    $permiso, $objForm['mu-company'], $objForm['mu-companyid'], $objForm['mu-active'], $usuarioBd,$conexion
+                    );
+                
+                    if($validador -> existe_cambio()){
                         
-                        $maxUser = RepositorioEmpresa::max_usuarios_contrato($conexion,$validador->getEmpresa_id());
-                        $cantUser = RepositorioEmpresa::cantidad_usuarios_empresaid($conexion, $validador ->getEmpresa_id());
-                        $empresaActiva = RepositorioEmpresa:: empresa_activa($conexion, $validador -> getEmpresa_id());
-                        
-                        if($cantUser < $maxUser && $empresaActiva){
+                        if($validador -> registro_valido()){
                             
-                            if($usuarioBd -> getUs_activo() == 0){  // si el usuario esta en 0 quiere decir que tuvo q ver sido activado.
-                                $firstlogin = 1;
-                            }else{
-                                $firstlogin = 0;
-                            }  
-
-                            $accion="MODIFICADO";
-
-                            $objUser = new Usuario(
-                                                    '',$validador -> getNombre(), $validador -> getApellido(),
-                                                    $validador -> getUsuario(),$validador -> getEmail(),
-                                                    $validador -> getFecha(), $validador -> getDni(),
-                                                    $validador -> getSexo(), $validador -> getCalle(),
-                                                    $validador -> getAltura(), $validador -> getPiso(),
-                                                    $validador -> getDpto(), $validador -> getCiudad(), $validador -> getPais(),
-                                                    password_hash($validador ->getContrasena(), PASSWORD_DEFAULT, array("cost"=> 10)),
-                                                    $validador -> getPermiso(), $validador -> getActivo(), $firstlogin, $validador -> getEmpresa_id()
-                                                );
-                                                 
-                            $userModify = RepositorioUsuario::update_usuario_por_dni($conexion,$objUser,$_SESSION['data']);
+                            $maxUser = RepositorioEmpresa::max_usuarios_contrato($conexion,$validador->getEmpresa_id());
+                            $cantUser = RepositorioEmpresa::cantidad_usuarios_empresaid($conexion, $validador ->getEmpresa_id());
+                            $empresaActiva = RepositorioEmpresa:: empresa_activa($conexion, $validador -> getEmpresa_id());
                             
-                            if($userModify){
+                            if($cantUser < $maxUser && $empresaActiva){
+                                
+                                if($usuarioBd -> getUs_activo() == 0){  // si el usuario esta en 0 quiere decir que tuvo q ver sido activado.
+                                    $firstlogin = 1;
+                                }else{
+                                    $firstlogin = 0;
+                                }  
 
-                                $abm_usuarios_insertado = procesoAbmUsuarios($conexion,$accion, $objUser -> getUs_dni(), $objUser -> getEmpresa_id());
-                                if($abm_usuarios_insertado){
-                                    
-                                    if($usuarioBd -> getUs_Activo() == '0'){
+                                $accion="MODIFICADO";
+
+                                $objUser = new Usuario(
+                                                        '',$validador -> getNombre(), $validador -> getApellido(),
+                                                        $validador -> getUsuario(),$validador -> getEmail(),
+                                                        $validador -> getFecha(), $validador -> getDni(),
+                                                        $validador -> getSexo(), $validador -> getCalle(),
+                                                        $validador -> getAltura(), $validador -> getPiso(),
+                                                        $validador -> getDpto(), $validador -> getCiudad(), $validador -> getPais(),
+                                                        password_hash($validador ->getContrasena(), PASSWORD_DEFAULT, array("cost"=> 10)),
+                                                        $validador -> getPermiso(), $validador -> getActivo(), $firstlogin, $validador -> getEmpresa_id()
+                                                    );
+                                                    
+                                $userModify = RepositorioUsuario::update_usuario_por_dni($conexion,$objUser,$_SESSION['data']);
+                                
+                                if($userModify){
+
+                                    $abm_usuarios_insertado = procesoAbmUsuarios($conexion,$accion, $objUser -> getUs_dni(), $objUser -> getEmpresa_id());
+                                    if($abm_usuarios_insertado){
                                         
-                                        emails::aviso_alta_usuario($objUser); //el usuario es avisado q fue dado de alta nuevamente
+                                        if($usuarioBd -> getUs_Activo() == '0'){
+                                            
+                                            emails::aviso_alta_usuario($objUser); //el usuario es avisado q fue dado de alta nuevamente
+                                            
+                                        }else{
+                                            
+                                            emails::aviso_modificado_usuario($objUser);
+                                            
+                                        }
                                         
-                                    }else{
+                                        $json['status'] = 1;
                                         
-                                        emails::aviso_modificado_usuario($objUser);
                                         
                                     }
-                                    
-                                    $json['status'] = 1;
-                                    
-                                    
-                                }
-                            }                                     
-                                            
-                        }
+                                }                                     
+                                                
+                            }
 
-                    }else{
-                        
-                        $error = array(
-                            'mu-name' => $validador -> getErrorNombre(),
-                            'mu-lastname' => $validador -> getErrorApellido(),
-                            'mu-username' => $validador -> getErrorUsuario(),
-                            'mu-email' => $validador -> getErrorEmail(),
-                            'mu-birth' => $validador -> getErrorFecha(),
-                            'mu-dni' => $validador -> getErrorDni(),
-                            'mu-sex' => $validador -> getErrorSexo(),
-                            'mu-password' => $validador -> getErrorContrasena(),
-                            'mu-password2' => $validador -> getErrorContrasena2(),
-                            'mu-street' => $validador -> getErrorCalle(),
-                            'mu-number' => $validador -> getErrorAltura(),
-                            'mu-floor' => $validador -> getErrorPiso(),
-                            'mu-department' => $validador -> getErrorDpto(),
-                            'mu-city' => $validador -> getErrorCiudad(),
-                            'mu-country' => $validador -> getErrorPais(),
-                            'mu-perm-1' => $validador -> getErrorPermiso(),
-                            'mu-perm-2' => $validador -> getErrorPermiso(),
-                            'mu-perm-3' => $validador -> getErrorPermiso(),
-                            'mu-perm-4' => $validador -> getErrorPermiso(),
-                            'mu-perm-5' => $validador -> getErrorPermiso(),
-                            'mu-perm-6' => $validador -> getErrorPermiso(),
-                            'mu-company' => $validador -> getErrorEmpresa(),
-                            'mu-companyid' => $validador -> getErrorEmpresa_id(),
-                            'mu-active' => $validador -> getErrorActivo()
-                        );
-                        $json['status'] = 0;
-                        foreach($error as $clave => $valor){
-                            $json[$clave] = $valor;
                         }
+                        
+                    }else{
+                        $json['status'] = 1;
                     }
+                    $error = array(
+                        'mu-name' => $validador -> getErrorNombre(),
+                        'mu-lastname' => $validador -> getErrorApellido(),
+                        'mu-username' => $validador -> getErrorUsuario(),
+                        'mu-email' => $validador -> getErrorEmail(),
+                        'mu-birth' => $validador -> getErrorFecha(),
+                        'mu-dni' => $validador -> getErrorDni(),
+                        'mu-sex' => $validador -> getErrorSexo(),
+                        'mu-password' => $validador -> getErrorContrasena(),
+                        'mu-password2' => $validador -> getErrorContrasena2(),
+                        'mu-street' => $validador -> getErrorCalle(),
+                        'mu-number' => $validador -> getErrorAltura(),
+                        'mu-floor' => $validador -> getErrorPiso(),
+                        'mu-department' => $validador -> getErrorDpto(),
+                        'mu-city' => $validador -> getErrorCiudad(),
+                        'mu-country' => $validador -> getErrorPais(),
+                        'mu-perm-1' => $validador -> getErrorPermiso(),
+                        'mu-perm-2' => $validador -> getErrorPermiso(),
+                        'mu-perm-3' => $validador -> getErrorPermiso(),
+                        'mu-perm-4' => $validador -> getErrorPermiso(),
+                        'mu-perm-5' => $validador -> getErrorPermiso(),
+                        'mu-perm-6' => $validador -> getErrorPermiso(),
+                        'mu-company' => $validador -> getErrorEmpresa(),
+                        'mu-companyid' => $validador -> getErrorEmpresa_id(),
+                        'mu-active' => $validador -> getErrorActivo()
+                    );
                     
-                }else{
-                    $json['status'] = 1;
+                    foreach($error as $clave => $valor){
+                        $json[$clave] = $valor;
+                    }
                 }
-                ControlSesion::destruirDatito();
             }
-            
             echo json_encode($json);
             
         break;
         case 'form-check-user':
             $json['form'] = 'form-check-user';
             $json['status'] = 0;
-            $search = isset($_POST['dni-check']) ? $_POST['dni-check'] : null;
+            $search = isset($_POST['dni-check']) && !empty($_POST['dni-check'])? $_POST['dni-check'] : null;
             Conexion::abrir_conexion();
             $conexion = Conexion::obtener_conexion();
             Conexion::cerrar_conexion();
@@ -859,6 +862,7 @@ header('Content-Type: application/json');
             
             echo json_encode($json);                     
         break;
+ 
     }
     function fechaActual(){
         date_default_timezone_set('America/Argentina/Buenos_Aires');
