@@ -1,3 +1,8 @@
+<?php 
+    //$captcha = require_once 'captcha_v1.php'; 
+    //require_once 'captcha_v1.php';
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,6 +71,7 @@
     </style>
 </head>
 <body id="body">
+    
     <div class="loader-bg" id="preloader">
         <div class="loader">
             <div class="bounce1"></div>
@@ -99,6 +105,7 @@
 
         })();
     </script>
+    
 
     <div class="container-fluid fixed-top bg-dark" style="box-shadow: 0 0 20px 0 rgba(0,0,0,0.2);">
         <div class="container px-0">
@@ -284,7 +291,7 @@
                                     <li>Contrato por 12 meses</li>
                                 </ul>
                                 <h1 class="card-title">$500 <small class="text-muted">/mes</small></h1>
-                                <button type="button" class="btn btn-lg btn-block btn-warning text-uppercase mt-4">Contratar</button>
+                                <button type="button" class="btn btn-lg btn-block btn-warning text-uppercase mt-4" data-toggle="modal" data-target="#contratar">Contratar</button>
                             </div>
                         </div>
                     </div>
@@ -300,7 +307,7 @@
                                     <li>Contrato por 12 meses</li>
                                 </ul>
                                 <h1 class="card-title">$1500 <small class="text-muted">/mes</small></h1>
-                                <button type="button" class="btn btn-lg btn-block btn-warning text-uppercase mt-4">Contratar</button>
+                                <button type="button" class="btn btn-lg btn-block btn-warning text-uppercase mt-4" data-toggle="modal" data-target="#contratar">Contratar</button>
                             </div>
                         </div>
                     </div>
@@ -316,7 +323,7 @@
                                     <li>Contrato por 24 meses</li>
                                 </ul>
                                 <h1 class="card-title">$2500 <small class="text-muted">/mes</small></h1>
-                                <button type="button" class="btn btn-lg btn-block btn-warning text-uppercase mt-4">Contratar</button>
+                                <button type="button" class="btn btn-lg btn-block btn-warning text-uppercase mt-4" data-toggle="modal" data-target="#contratar">Contratar</button>
                             </div>
                         </div>
                     </div>
@@ -335,33 +342,43 @@
             <div class="row">
                 <div class="col-md-8 mb-4">
                     <div class="mapa">
-                        <iframe width="100%" height="390" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.668529662471!2d-58.377485085052015!3d-34.61254246547158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccad4506b020d%3A0x5f61c6f9b3c894a1!2sAv.%20Belgrano%20637%2C%20C1092%20AAG%2C%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1601056291096!5m2!1ses!2sar"></iframe>
+                        <iframe width="100%" height="470" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.668529662471!2d-58.377485085052015!3d-34.61254246547158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccad4506b020d%3A0x5f61c6f9b3c894a1!2sAv.%20Belgrano%20637%2C%20C1092%20AAG%2C%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1601056291096!5m2!1ses!2sar"></iframe>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <form  autocomplete="off">
+                    <form class="form-new-contact" autocomplete="off">
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label class="text-muted" style="font-family: 'Oswald';">Nombre y Apellido</label>
-                                <input type="text" class="form-control">
+                                <input type="text" name="contact-fullname" class="form-control">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label class="text-muted"  style="font-family: 'Oswald';">Correo electrónico</label>
-                                <input type="text" class="form-control">
+                                <input type="text" name="contact-email" class="form-control">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label class="text-muted"  style="font-family: 'Oswald';">Teléfono</label>
-                                <input type="text" class="form-control">
+                                <input type="text"  name="contact-phone" class="form-control">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label class="text-muted"  style="font-family: 'Oswald';">Mensaje</label>
-                                <textarea name="falla" class="form-control" rows="3"></textarea>
+                                <textarea  name="contact-message" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label class="text-muted"  style="font-family: 'Oswald';">Captcha</label>
+                                <input type="text"  name="contact-captcha" class="form-control">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="text-muted"  style="font-family: 'Oswald';">&nbsp;</label>
+                                <img src="" class="captcha" style="width: 100%; height: auto;">
                             </div>
                         </div>
                         <div class="form-row">
@@ -369,7 +386,7 @@
                                 <button type="button" class="btn btn-block btn-light" id="reset">Reset</button>
                             </div>
                             <div class="form-group col-md-6">
-                                <button type="submit" class="btn btn-block btn-warning" id="save">Enviar</button>
+                                <button type="submit" class="btn btn-block btn-warning">Enviar</button>
                             </div>
                         </div>
                     </form>
@@ -430,21 +447,218 @@
 
     <div class="container-fluid bg-dark">
         <div class="container">
-            <div class="row" style="height: 100px;">
+            <div class="row" style="min-height: 100px;">
                 <div class="col-sm-6 col my-auto copyr">
                     <span class="text-muted">&copy; 2019-2020 Starfleet Company, Inc. un producto de UdeIT.</span>
                 </div>
                 <div class="col-sm-6 col my-auto redes">
-                    <a class="ml-3" href="#"><img src="images/logo-facebook.svg" style="max-height: 30px; width: 30px;"></a>
-                    <a class="ml-3" href="#"><img src="images/logo-instagram.svg" style="max-height: 30px; width: 30px;"></a>
+                    <a class="ml-3" href="https://www.facebook.com/117257476778526/"><svg width="35.863mm" height="67.582mm" viewBox="0 0 35.863 67.582" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><g transform="translate(119.91 -126.36)"><path d="m-107.43 193.79c-0.84778-0.11858-1.6504-0.32459-1.7836-0.4578-0.1389-0.1389-0.27139-6.3876-0.31065-14.651l-0.0684-14.409-10.319-0.26459v-11.906l10.319-0.26458 0.17367-6.2177c0.14095-5.0462 0.27682-6.6072 0.72111-8.2852 1.7602-6.6477 6.6199-10.464 13.936-10.945 2.4552-0.16128 8.9973 0.31281 10.1 0.73189l0.6139 0.23341-0.144 9.9305-3.7275 0.15409c-4.3472 0.17972-5.7224 0.65417-6.9973 2.4141-1.0883 1.5024-1.3597 3.1941-1.2646 7.8828l0.0832 4.101 5.5486 0.0717c3.0517 0.0394 5.637 0.1601 5.745 0.26815 0.21952 0.21952-1.2543 10.438-1.6388 11.362-0.23877 0.57383-0.36766 0.59106-4.95 0.66146l-4.7048 0.0723-0.0684 14.478c-0.0683 14.46-0.0691 14.478-0.63101 14.779-0.69393 0.37138-8.4765 0.56242-10.632 0.26097z"/></g></svg></a>
+                    <a class="ml-3" href="https://www.instagram.com/starfleetcompany?r=nametag"><svg width="60.693mm" height="60.595mm" viewBox="0 0 60.693 60.595" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><g transform="translate(92.378 -123.7)"><path d="m-74.801 184.16c-6.4097-0.45088-10.814-2.5016-13.744-6.4-3.3336-4.4347-3.832-7.5267-3.832-23.775 0-16.219 0.5066-19.39 3.7927-23.734 2.3143-3.0592 5.6011-5.0403 9.9305-5.9855 2.3815-0.51988 3.3452-0.55299 16.421-0.56404 14.602-0.0123 15.854 0.0674 19.441 1.2378 4.5115 1.4722 8.361 5.3226 9.898 9.9004 1.1299 3.3653 1.2213 4.8305 1.2102 19.409-0.0099 13.089-0.0425 14.037-0.56403 16.421-1.5432 7.0539-5.9486 11.493-12.901 13-2.1494 0.46588-3.6669 0.52914-14.57 0.60747-6.694 0.0481-13.481-5e-3 -15.081-0.11731zm28.781-5.9124c4.6565-1.1063 7.5354-4.1919 8.4432-9.0494 0.49316-2.6387 0.49316-27.788 0-30.427-0.95022-5.0843-4.122-8.2583-9.1789-9.1854-2.6261-0.48145-27.801-0.48145-30.427 0-5.0569 0.92712-8.2286 4.1011-9.1789 9.1854-0.49316 2.6387-0.49316 27.788 0 30.427 0.46705 2.499 1.3524 4.3473 2.8487 5.947 1.9542 2.0892 3.9598 2.9051 8.7114 3.5437 0.43656 0.0587 6.6873 0.0793 13.891 0.0458 10.971-0.051 13.388-0.13002 14.891-0.48706zm-19.389-9.0636c-4.2619-0.91442-8.4344-4.1486-10.393-8.0556-5.9224-11.816 4.2283-25.057 17.14-22.358 5.8135 1.2152 10.692 6.0932 11.907 11.907 2.3372 11.181-7.4662 20.907-18.654 18.507zm7.6849-6.1161c3.6599-1.7292 5.8088-5.0895 5.8088-9.0832 0-7.3995-7.6114-12.232-14.308-9.0834-2.1606 1.0158-3.8089 2.6643-4.8495 4.85-0.73716 1.5484-0.81877 1.9703-0.81877 4.2333 0 2.1984 0.09287 2.7126 0.7407 4.101 0.84768 1.8168 2.7399 3.8895 4.2864 4.6952 1.9066 0.99332 3.0954 1.2564 5.3037 1.1737 1.7168-0.0643 2.4591-0.23586 3.8365-0.88664zm10.121-22.302c-2.9967-1.8272-1.6712-6.6253 1.8302-6.6253 2.7554 0 4.5512 3.144 3.1286 5.4772-0.99298 1.6285-3.2962 2.1618-4.9588 1.148z"/></g></svg></a>
                 </div>
             </div>
         </div>
     </div>
 
+<!-- Modals - Start -->
+
+<div class="modal fade" id="contratar" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" style="border-radius: 0px !important;">
+
+            <div class="modal-header">
+                <h5 class="modal-title" >Contratar un Plan</h5>
+                <button type="button" class="close" data-dismiss="modal" style="outline: none !important;"><span aria-hidden="true">&times;</span></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Form Contratar Plan - Start -->
+                <form class="form-new-contract" autocomplete="off">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Razón Social</label>
+                            <input type="text" name="contract-razon" class="form-control">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>CUIT</label>
+                            <input type="text" name="contract-cuit" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <label>Calle</label>
+                            <input type="text" name="contract-street" class="form-control">
+                        </div>
+                        <div class="form-group col">
+                            <label>Número</label>
+                            <input type="text" name="contract-number" class="form-control">
+                        </div>
+                        <div class="form-group col">
+                            <label>Piso</label>
+                            <input type="text" name="contract-floor" class="form-control">
+                        </div>
+                        <div class="form-group col">
+                            <label>Dpto</label>
+                            <input type="text" name="contract-department" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Código Postal</label>
+                            <input type="text" name="contract-cp" class="form-control">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Ciudad</label>
+                            <input type="text" name="contract-city" class="form-control">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>País</label>
+                            <input type="text" name="contract-country" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Teléfono</label>
+                            <input type="text" name="contract-phone" class="form-control">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Email</label>
+                            <input type="text" name="contract-email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Seleccionar el Tipo de Contrato</label>
+                            <select class="form-control" name="contract-type">
+                                <option value="1">Básico</option>
+                                <option value="1">Pro</option>
+                                <option value="1">Premium</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Captcha</label>
+                            <input type="text"  name="contract-captcha" class="form-control">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>&nbsp;</label>
+                            <img src="" class="captcha" style="border: 1px solid #ced4da; width: 100%; max-height: 38px; height: auto;">
+                        </div>
+                    </div>
+                    <div class="last-form-row form-row">
+                        <div class="form-group col-md-8">
+                            <div class="form-msg"></div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button type="button" class="btn btn-block btn-dark" data-dismiss="modal">Cerrar</button>
+                        </div>
+                        <div class="form-group col-md-2 mb-0">
+                            <button type="submit" class="btn btn-block btn-warning">Enviar</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- Form Contratar Plan - End -->
+
+            </div>
+            <!--
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning">Enviar</button>
+            </div>
+            -->
+        </div>
+    </div>
+</div>
+
+<!-- Modals - End -->
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/app.js"></script>
+    <script>
+
+        $('form').submit(function(){
+
+            var form = $(this).attr('class');
+
+            $.ajax({
+                url : '../scripts/validateForm.php',//'ajax.php', // PHP con las funciones ajax
+                type: 'POST',
+                dataType: 'json',
+                data: 'usersForm=' + form + '&' + $('.' + form).serialize(), // Datos del formulario
+                beforeSend: function(){},
+                success:  function(data){
+                    
+                    if(data.status == 0)
+                    {
+
+                        setTimeout(function(){
+
+                            $('.form-msg').removeClass('alert-success').addClass('alert-danger').html('Verificar los campos marcados.');
+
+                            $.map(data, function(v, k){
+
+                                if(v == 0)
+                                {
+                                    $('[name="' + k + '"]').addClass('form-error');
+                                }
+                                else
+                                {
+                                    $('[name="' + k + '"]').removeClass('form-error');
+                                }
+
+                            });
+
+                        }, 1000);
+
+                        setTimeout(function(){
+                            $('.form-msg').removeClass('alert-danger').html('');
+                        }, 5000);
+
+                    }
+                    else
+                    {
+                        setTimeout(function(){
+                            $('.form-msg').removeClass('alert-danger').addClass('alert-success').html('Datos registrados exitosamente.');
+                        }, 1000);
+
+                        setTimeout(function(){
+                            $('.form-msg').removeClass('alert-success').html('');
+                            $('.reset').click();
+                        }, 5000);
+                    }
+
+                }
+            });
+
+            return false;
+        });
+
+        $('#reset').on('click', function(){
+
+            var form = $($(this)[0].form).attr('class');
+
+            $('.' + form).find('input').each(function(){
+                $(this).val('');
+            });
+
+            $('.' + form).find('textarea').each(function(){
+                $(this).val('');
+            });
+
+        });
+
+        getCaptcha();
+        setInterval(function(){
+            getCaptcha();
+        }, 15 * 1000);
+
+        function getCaptcha()
+        {
+            $.get('captcha_v1.php', function(d) {
+                $('.captcha').attr('src', d);
+            });
+        }
+    </script>
 
 </body>
 </html>

@@ -827,41 +827,65 @@ header('Content-Type: application/json');
             echo json_encode($json);
 
         break;
-        case 'form-liendro':
+        case 'form-new-contract'://profe liendro
+            ControlSesion::sesion_iniciada();
             $json['status'] = 0;
             foreach($_POST as $key => $value){
                 $objForm[$key] = isset($value) && !empty($value) ? $value : null;
             }
-            Conexion::abrir_conexion();
-            $conexion = Conexion::obtener_conexion();
-            Conexion::cerrar_conexion();
-            $_validado = new ValidadorAltaEmpresas($objForm['le-razon'],$objForm['le-cuit'], 
-                                                    $objForm['le-street'], $objForm['le-number'], 
-                                                    $objForm['le-floor'], $objForm['le-department'], 
-                                                    $objForm['le-city'], $objForm['le-country'], 
-                                                    $objForm['le-cp'], $objForm['le-phone'], 
-                                                    $objForm['le-email'], 1, 
-                                                    $objForm['le-contract'], $conexion);
-            if($_validado -> registro_valido()){
-                emails::aviso_nueva_empresa($_validado);
-                $json['status'] = 1;
+            
+            if(strtoupper($objForm['contract-captcha']) === strtoupper($_SESSION['captcha'])){
+                Conexion::abrir_conexion();
+                $conexion = Conexion::obtener_conexion();
+                Conexion::cerrar_conexion();
+                $_validado = new ValidadorAltaEmpresas($objForm['contract-razon'],$objForm['contract-cuit'], 
+                                                        $objForm['contract-street'], $objForm['contract-number'], 
+                                                        $objForm['contract-floor'], $objForm['contract-department'], 
+                                                        $objForm['contract-city'], $objForm['contract-country'], 
+                                                        $objForm['contract-cp'], $objForm['contract-phone'], 
+                                                        $objForm['contract-email'],1 ,
+                                                        $objForm['contract-type'], $conexion);
+         
+                if($_validado -> registro_valido()){
+                    emails::aviso_nueva_empresa($_validado);
+                    $json['status'] = 1;
+                }
+                
+                $json['contract-razon'] = $_validado -> getError_razonsocial();
+                $json['contract-cuit'] = $_validado -> getError_cuit();
+                $json['contract-street'] = $_validado -> getError_calle();
+                $json['contract-number'] = $_validado -> getError_altura();
+                $json['contract-floor'] = $_validado -> getError_piso();
+                $json['contract-department'] = $_validado -> getError_dpto();
+                $json['contract-city'] = $_validado -> getError_ciudad();
+                $json['contract-country'] = $_validado -> getError_pais();
+                $json['contract-cp'] = $_validado -> getError_cp();
+                $json['contract-phone'] = $_validado -> getError_tel();
+                $json['contract-email'] = $_validado -> getError_email();
+                $json['contract-active'] = $_validado -> getError_activo();
+                $json['contract-type'] = $_validado -> getError_contrato_id();
+            }else{
+                $json['contract-captcha'] = 0;
             }
             
-            $json['le-razon'] = $_validado -> getError_razonsocial();
-            $json['le-cuit'] = $_validado -> getError_cuit();
-            $json['le-street'] = $_validado -> getError_calle();
-            $json['le-number'] = $_validado -> getError_altura();
-            $json['le-floor'] = $_validado -> getError_piso();
-            $json['le-department'] = $_validado -> getError_dpto();
-            $json['le-city'] = $_validado -> getError_ciudad();
-            $json['le-country'] = $_validado -> getError_pais();
-            $json['le-cp'] = $_validado -> getError_cp();
-            $json['le-phone'] = $_validado -> getError_tel();
-            $json['le-email'] = $_validado -> getError_email();
-            $json['le-active'] = $_validado -> getError_activo();
-            $json['le-contract'] = $_validado -> getError_contrato_id();
-            
             echo json_encode($json);                     
+        break;
+        case 'form-new-contact': // profe liendro
+            ControlSesion::sesion_iniciada();
+            $json['status'] = 0;
+            foreach($_POST as $key => $value){
+                $objForm[$key] = isset($value) && !empty($value) ? $value : null;
+            }
+
+            if(strtoupper($_SESSION['captcha']) === strtoupper($objForm['contact-captcha'])){
+
+                $json['status'] = emails::form_contact($objForm) ? 1 : 0;
+
+            }else{
+                $json['contact-captcha'] = 0;
+            }
+            
+            echo json_encode($json);
         break;
  
     }

@@ -293,7 +293,7 @@ h1.display-4 {
     align-items: center;
     justify-content: center;
     border: 1px solid #343a40;
-    height: 410px;
+    height: 492px;
     background: #ffffff;
     padding: 10px;
 }
@@ -407,6 +407,17 @@ h1.display-4 {
 }
 .redes {
     text-align: right;
+}
+.redes a {
+    text-decoration: none;
+}
+.redes a svg {
+    fill: #f8f9fa;
+    max-height: 25px; 
+    width: 25px;
+}
+.redes a svg:hover {
+    fill: #ffc107;
 }
 /* Footer - End */
 
