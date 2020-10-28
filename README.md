@@ -4,6 +4,6 @@ Bueno para poner en contexto este proyecto es un sitio web que estamos realizand
 
 La idea del sitio web se basa en brindar un servicio de gestion de datos sobre logistica y transportes de una empresa.
 
--La empresa adquiere el servicio, se le da acceso a cierta cantidad de usuarios con la posibilidad de otorgar roles según necesidad para la manipulacion del ABM de datos por modulos.
+-La empresa adquiere el servicio, se le da acceso a cierta cantidad de usuarios con la posibilidad de otorgar roles según necesidad, para la manipulacion del ABM de datos por modulos.
 
 Tenemos el sistema online en donde estamos actualmente testeando cada cambio que vamos realizando: https://starfleet.company/profliendro
