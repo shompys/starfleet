@@ -849,6 +849,7 @@ header('Content-Type: application/json');
                 if($_validado -> registro_valido()){
                     emails::aviso_nueva_empresa($_validado);
                     $json['status'] = 1;
+                    $json['contact-captcha'] = $json['status'] === 1 ? 1 : 0;
                 }
                 
                 $json['contract-razon'] = $_validado -> getError_razonsocial();
@@ -862,7 +863,7 @@ header('Content-Type: application/json');
                 $json['contract-cp'] = $_validado -> getError_cp();
                 $json['contract-phone'] = $_validado -> getError_tel();
                 $json['contract-email'] = $_validado -> getError_email();
-                $json['contract-active'] = $_validado -> getError_activo();
+                //$json['contract-active'] = $_validado -> getError_activo();
                 $json['contract-type'] = $_validado -> getError_contrato_id();
             }else{
                 $json['contract-captcha'] = 0;
@@ -880,7 +881,7 @@ header('Content-Type: application/json');
             if(strtoupper($_SESSION['captcha']) === strtoupper($objForm['contact-captcha'])){
 
                 $json['status'] = emails::form_contact($objForm) ? 1 : 0;
-
+                $json['contact-captcha'] = $json['status'] === 1 ? 1 : 0;
             }else{
                 $json['contact-captcha'] = 0;
             }

@@ -1,7 +1,12 @@
 <?php 
     //$captcha = require_once 'captcha_v1.php'; 
     //require_once 'captcha_v1.php';
+    require_once '../app/Conexion.inc.php';
+    require_once '../app/RepositorioContrato.inc.php';
     session_start();
+    Conexion::abrir_conexion();
+    $_typeContract = RepositorioContrato::obtener_todos_nombres_contratos(Conexion::obtener_conexion());
+    Conexion::cerrar_conexion();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -530,9 +535,15 @@
                         <div class="form-group col-md-4">
                             <label>Seleccionar el Tipo de Contrato</label>
                             <select class="form-control" name="contract-type">
-                                <option value="1">Básico</option>
-                                <option value="1">Pro</option>
-                                <option value="1">Premium</option>
+                                <?php
+                                    if(count($_typeContract) >= 1){
+                                        foreach($_typeContract as $v){
+                                            echo '<option value=', $v['id_contrato'] ,'>', $v['con_descripcion'], '</option>';
+                                        }
+                                    }else{
+                                        ?><option value="">Nulo</option><?php 
+                                    }
+                                ?>
                             </select>
                         </div>
                         <div class="form-group col-md-4">
