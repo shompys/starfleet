@@ -17,17 +17,20 @@ class AbmContratos{
         $this -> abmc_fecha = $abmc_fecha;
     }
 
-    public function __call($name, $arguments){ 
-        $part1 = substr($name, 0, 3);   //extraigo el metodo
-        if($part1 === 'get'){   //compruebo si es get
-            $nameMethod = substr(strtolower($name),3); //extraigo nombre del atributo 
-            if(!isset($this -> $nameMethod)){
-                return 'atributo no existe';
-            }
-            return $this->$nameMethod; // esto es igual al return de un getter!!!
-        }else{
-            return 'el metodo no existe';
-        }
+    public function getId_abm_contrato(){
+        return $this -> Id_abm_contrato;
     }
-
+    public function getAdministrador_id(){
+        return $this -> administrador_id;
+    }
+    public function getcontrato_id(){
+        return $this -> contrato_id;
+    }
+    public function getAbmc_accion(){
+        return $this -> abmc_accion;
+    }
+    public function getAbmc_fecha(){
+        return $this -> abmc_fecha;
+    }
+    
 }

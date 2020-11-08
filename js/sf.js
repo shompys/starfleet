@@ -8,43 +8,57 @@ $(function(){
         }
     });
 
+    $('#mensajes').on('click', function(){
+        globalReset();
+        checkModal();
+        $('#panel-mensajes').css('display','block');
+        $('#panel-mensajes-close').on('click', function(){
+            $('#panel-mensajes').attr('style','display:none');
+        })
+    });
+
     $('#configuracion').on('click', function(){
         globalReset();
-        $('#panel-configuracion').css('z-index', checkModal).css('display','block');
+        checkModal();
+        $('#panel-configuracion').css('display','block');
         $('#panel-configuracion-close').on('click', function(){
             $('#panel-configuracion').attr('style','display:none');
-        });
+        })
+    });
+
+    $('#reportes').on('click', function(){
+        globalReset();
+        checkModal();
+        $('#panel-reportes').css('display','block');
+        $('#panel-reportes-close').on('click', function(){
+            $('#panel-reportes').attr('style','display:none');
+        })
     });
 
     $('#usuarios').on('click', function(){
         globalReset();
-        $('#panel-usuarios').css('z-index', checkModal).css('display','block');
+        checkModal();
+        $('#panel-usuarios').css('display','block');
         $('#panel-usuarios-close').on('click', function(){
             $('#panel-usuarios').attr('style','display:none');
-        });
-    });
-    
-    $('#informes').on('click', function(){
-        globalReset();
-        $('#panel-informes').css('z-index', checkModal).css('display','block');
-        $('#panel-informes-close').on('click', function(){
-            $('#panel-informes').attr('style','display:none');
-        });
-    });
-
-    $('#empresas').on('click', function(){
-        globalReset();
-        $('#panel-empresas').css('z-index', checkModal).css('display','block');
-        $('#panel-empresas-close').on('click', function(){
-            $('#panel-empresas').attr('style','display:none');
-        });
+        })
     });
 
     $('#contratos').on('click', function(){
         globalReset();
-        $('#panel-contratos').css('z-index', checkModal).css('display','block');
+        checkModal();
+        $('#panel-contratos').css('display','block');
         $('#panel-contratos-close').on('click', function(){
             $('#panel-contratos').attr('style','display:none');
+        })
+    });
+
+    $('#empresas').on('click', function(){
+        globalReset();
+        checkModal();
+        $('#panel-empresas').css('display','block');
+        $('#panel-empresas-close').on('click', function(){
+            $('#panel-empresas').attr('style','display:none');
         });
     });
 
@@ -52,13 +66,11 @@ $(function(){
     {
         $('.main-panel').each(function(){
             $('.active').removeClass('active');
-            //$('input').val('');
         });
     }
 
     var checkModal = function()
     {
-        var zindex = 0;
         if($('#sidebar').css('display') === 'block' && $(window).width() < 768)
         {
             $('button.navbar-toggler').click();
@@ -66,14 +78,9 @@ $(function(){
         $('.main-panel').children().each(function(){
             if($(this).hasClass('modal-panel-bg') && $(this).css('display') === "block")
             {
-                zindex = parseInt($(this).css('z-index')) + 1;
-            }
-            else
-            {
-                zindex = 9999;
+                $(this).css('display', 'none');
             }
         });
-        return zindex;
     }
 
     $('.main-panel .dropdown-item').on('click', function(){
@@ -131,26 +138,5 @@ $(function(){
     });
     
 
-
-
-
-    /**
-     * Userpic Upload Function - Start
-     */
-
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                $('#imagePreview').css('background-image', 'url('+e.target.result +')');
-                $('#imagePreview').hide();
-                $('#imagePreview').fadeIn(650);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    $("#imageUpload").change(function() {
-        readURL(this);
-    });
 
 });

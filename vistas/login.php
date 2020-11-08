@@ -1,10 +1,10 @@
 <?php
-require_once 'app/config.inc.php';
-require_once 'app/Conexion.inc.php';
-require_once 'app/ControlSesion.inc.php';
-require_once 'app/Redireccion.inc.php';
-require_once 'app/RepositorioAdministrador.inc.php';
-require_once 'app/ControlCookie.inc.php';
+include_once 'app/config.inc.php';
+include_once 'app/Conexion.inc.php';
+include_once 'app/ControlSesion.inc.php';
+include_once 'app/Redireccion.inc.php';
+include_once 'app/RepositorioAdministrador.inc.php';
+include_once 'app/ControlCookie.inc.php';
 
 if(ControlCookie::cookie_iniciada_sesion()){
     ControlSesion::iniciar_sesion($_COOKIE['id'],$_COOKIE['usuario']);
@@ -26,8 +26,7 @@ if(ControlSesion::sesion_iniciada()){ // si el usuario ya inicio sesion lo echam
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <!--<link rel='shortcut icon' type='image/svg' href="logo.svg">-->
-    <title>StarFleet v1.0.13.08.2020</title>
+    <title>StarFleet v1.0.05.11.2020</title>
     <link rel="stylesheet" href="<?php echo RUTA_CSS?>bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo RUTA_CSS?>sf-login.css">
     <link rel="stylesheet" href="<?php echo RUTA_CSS?>sf.css">
@@ -63,7 +62,7 @@ if(ControlSesion::sesion_iniciada()){ // si el usuario ya inicio sesion lo echam
                         <button type="button" class="btn btn-link text-muted" style="font-size: 0.8rem;" id="request-link">Olvide mi contraseña</button>
                     </div>
                     <hr class="m-0">
-                    <div class="version text-center text-muted mb-0 mt-2" style="font-size: 0.8rem;">v1.0.13.08.2020</div>
+                    <div class="version text-center text-muted mb-0 mt-2" style="font-size: 0.8rem;">v1.0.05.11.2020</div>
                 </form>
                 <!-- Form Login - End -->
                 <!-- Form Request - Start -->
@@ -87,7 +86,7 @@ if(ControlSesion::sesion_iniciada()){ // si el usuario ya inicio sesion lo echam
                         <button type="button" class="btn btn-link text-muted" style="font-size: 0.8rem;" id="signin-link">Iniciar sesión</button>
                     </div>
                     <hr class="m-0">
-                    <div class="version text-center text-muted mb-0 mt-2" style="font-size: 0.8rem;">v1.0.03.08.2020</div>
+                    <div class="version text-center text-muted mb-0 mt-2" style="font-size: 0.8rem;">v1.0.05.11.2020</div>
                 </form>
                 <!-- Form Request - End -->
                 <!-- Form Change Password - Start -->
@@ -109,7 +108,7 @@ if(ControlSesion::sesion_iniciada()){ // si el usuario ya inicio sesion lo echam
                     </div>
                     <button class="btn btn-lg btn-warning btn-block" type="submit" id="change">Cambiar contraseña</button>             
                     <hr class="mb-0">
-                    <div class="version text-center text-muted mb-0 mt-2" style="font-size: 0.8rem;">v1.0.03.08.2020</div>
+                    <div class="version text-center text-muted mb-0 mt-2" style="font-size: 0.8rem;">v1.0.05.11.2020</div>
                 </form>
                 <!-- Form Change Password - End -->
 
@@ -160,7 +159,7 @@ if(ControlSesion::sesion_iniciada()){ // si el usuario ya inicio sesion lo echam
 
                     },
                     success:  function(data){
-                        //console.log($('.' + form).serialize());
+                        
                         if(id === 'signin' && data.status === 1)
                         {
                             location.reload();

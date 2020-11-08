@@ -20,19 +20,24 @@ class Contrato{
 
     }
 
-    public function __call($name, $arguments){ 
-        $part1 = substr($name, 0, 3);   //extraigo el metodo
-        if($part1 === 'get'){   //compruebo si es get
-            $nameMethod = substr(strtolower($name),3); //extraigo nombre del atributo 
-            if(!isset($this -> $nameMethod)){
-                return 'atributo no existe';
-            }
-            return $this->$nameMethod; // esto es igual al return de un getter!!!
-        }else{
-            return 'el metodo no existe';
-        }
+    public function getId_contrato(){
+        return $this -> id_contrato;
     }
-
+    public function getCon_descripcion(){
+        return $this -> con_descripcion;
+    }
+    public function getCon_precio(){
+        return $this -> con_precio;
+    }
+    public function getCon_maxusuarios(){
+        return $this -> con_maxusuarios;
+    }
+    public function getCon_duracionmeses(){
+        return $this -> con_duracionmeses;
+    }
+    public function getCon_activo(){
+        return $this -> con_activo;
+    }
 
 
 }

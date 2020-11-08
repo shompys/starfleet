@@ -38,6 +38,7 @@ class ValidadorContratos{
     }
 
     private function validar_desc($con, $desc){
+
         if($this -> var_iniciada($desc)){
             $this -> desc = $desc;
         }else{
@@ -91,8 +92,14 @@ class ValidadorContratos{
         return 1;
     }
     private function validar_activo($activo){
+    
         if($this -> var_iniciada($activo)){
             $this -> activo = $activo;
+        }else{
+            return 0;
+        }
+        if(isset($activo) && !empty($activo)){
+            return 1;
         }else{
             return 0;
         }
@@ -112,6 +119,9 @@ class ValidadorContratos{
     }
     public function getErrorDuracionMeses(){
         return $this -> err_duracionMeses;
+    }
+    public function getErrorActivo(){
+        return $this -> err_activo;
     }
     public function getDesc(){
         return $this -> desc;

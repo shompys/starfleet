@@ -443,5 +443,26 @@ class RepositorioEmpresa{
         return $status;
     }
 
-    
+    public static function obtener_nombres_empresas($conexion){//falta recibir activo
+        $obj = null;
+
+        if(isset($conexion)){
+            try{
+                $sql="SELECT em_razonsocial FROM empresas WHERE em_activo = 1 ORDER BY id_empresa ASC";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> execute();
+                $result = $sentencia -> fetchAll();
+                if(!empty($result)){
+                    
+                    foreach($result as $key => $value){
+                        $obj[$key]= $value;
+                    }
+                }
+                
+            }catch(PDOException $e){
+                'ERROR: ' . $e -> getMessage();
+            }
+        }
+        return $obj;
+    }
 }

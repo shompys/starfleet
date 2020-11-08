@@ -24,6 +24,7 @@ require_once '../app/ValidadorAltaEmpresas.inc.php';
 require_once '../app/ValidadorClave.inc.php';
 require_once '../app/ValidadorContratos.inc.php';
 require_once '../app/ValidadorLogin.inc.php';
+require_once '../app/ValidadorModificarContrato.inc.php';
 require_once '../app/ValidadorModificarEmpresa.inc.php';
 require_once '../app/ValidadorModificarUsuario.inc.php';
 require_once '../app/ValidadorRegistro.inc.php';
@@ -177,54 +178,268 @@ header('Content-Type: application/json');
             
             echo json_encode($alan);
         break;
-        case 'contrato_alta':
+        case 'form-new-contracts':
             ControlSesion::sesion_iniciada();
-            $alan['status'] = 0;
-            $desc = isset($_POST['descripcion']) ? $_POST['descripcion'] : null;
-            $precio = isset($_POST['precio']) ? $_POST['precio'] : null;
-            $maxUser = isset($_POST['maxUser']) ? $_POST['maxUser'] : null;
-            $meses = isset($_POST['meses']) ? $_POST['meses'] : null;
+            $json['status'] = 0;
+            $desc = isset($_POST['nc-desc']) ? $_POST['nc-desc'] : null;
+            $precio = isset($_POST['nc-price']) ? $_POST['nc-price'] : null;
+            $maxUser = isset($_POST['nc-max-users']) ? $_POST['nc-max-users'] : null;
+            $meses = isset($_POST['nc-life']) ? $_POST['nc-life'] : null;
+            $activo = isset($_POST['nc-active']) ? $_POST['nc-active'] : null;
             //-------------------------------------------------------insercion-------------------
             Conexion::abrir_conexion();
+            $conexion = Conexion::obtener_conexion();
+            Conexion::cerrar_conexion();
             $validador = new ValidadorContratos(
-                        $desc, $precio, $maxUser, $meses, 
-                        Conexion::obtener_conexion()
+                        $desc, $precio, $maxUser, $meses, $activo,
+                        $conexion
                         );
             //si valido todo ok
-            if($validador -> registro_Valido()){
+            if($validador -> registro_valido()){
                 $contrato = new Contrato('', $validador -> getDesc(),
                                             $validador -> getPrecio(),
                                             $validador -> getMaxUser(),
-                                            $validador -> getDuracionMeses()
+                                            $validador -> getDuracionMeses(),
+                                            $validador -> getActivo()
                                         );
-                $insertado = RepositorioContrato::insertarContrato(Conexion::obtener_conexion(), $contrato);
+                $insertado = RepositorioContrato::insertarContrato($conexion, $contrato);
                 if($insertado){
                     $administrador_id = $_SESSION['id_usuario'];
-                    $contrato_id= RepositorioContrato::obtener_id(Conexion::obtener_conexion(), $validador -> getDesc());
+                    $contrato_id= RepositorioContrato::obtener_id($conexion, $validador -> getDesc());
                     $fecha = fechaActual();
                     $abm_contratos = new AbmContratos('', $administrador_id, $contrato_id, 'ALTA', $fecha);
-                    $insertado2 = RepositorioAbmContratos::insertarAbmContratos(Conexion::obtener_conexion(),$abm_contratos);
+                    $json['status'] = RepositorioAbmContratos::insertarAbmContratos($conexion,$abm_contratos) ? 1 : 0;
                     
-                    $alan['status'] = 1;
                 }
-            }else{
-                $err = array(
-                    'descripcion' => $validador -> getErrorDesc(),
-                    'precio' => $validador -> getErrorPrecio(),
-                    'maxUser' => $validador ->getErrorMaxUser(),
-                    'meses' => $validador -> getErrorDuracionMeses()
-                );
             }
+            $error = array(
+                'descripcion' => $validador -> getErrorDesc(),
+                'precio' => $validador -> getErrorPrecio(),
+                'maxUser' => $validador ->getErrorMaxUser(),
+                'meses' => $validador -> getErrorDuracionMeses(),
+                 'activo' => $validador -> getErrorActivo()
+            );
+            
+            
+
+            foreach($error as $key => $value){
+                $json[$key] = $value;
+            }
+            echo json_encode($json);
+
+        break;
+        case 'form-del-contract':
+            ControlSesion::sesion_iniciada();
+            $json['form'] = 'form-del-contract';
+            $json['status'] = 1;
+            
+            $check = isset($_POST['contract-check']) && !empty($_POST['contract-check']) ? $_POST['contract-check'] : null;
+            $activo = isset($_POST['dc-active']) ? $_POST['dc-active'] : null;
+
+            
+            if($check !== null){
+                ControlSesion::datito($check);
+            }
+
+            Conexion::abrir_conexion();
+            $conexion = Conexion::obtener_conexion();
             Conexion::cerrar_conexion();
-            if($alan['status'] === 0){
-                foreach($err as $clave => $valor){
-                    if($valor === 0){
-                        $alan[$clave] = $valor;
+
+            if(RepositorioContrato::contrato_existe_id($conexion, $check)){
+                
+                $json['status'] = 1;
+                $_contrato = RepositorioContrato::obtener_objContrato($conexion, $check);
+                
+                $json['dc-desc'] = $_contrato -> getCon_descripcion();
+                $json['dc-price'] = $_contrato -> getCon_precio();
+                $json['dc-max-users'] = $_contrato -> getCon_maxusuarios();
+                $json['dc-life'] = $_contrato -> getCon_duracionmeses();
+                $json['dc-active'] = $_contrato -> getCon_activo();
+
+            }
+            
+            if($check === null){
+                $_contratoBd = RepositorioContrato::obtener_objContrato($conexion, $_SESSION['data']);
+                if($activo == '0'){
+                    $accion = 'BAJA';
+                    if(RepositorioContrato::contrato_activa_por_id($conexion,$_SESSION['data'])){          
+                        if(RepositorioContrato::contratoSetActivo($conexion, $_SESSION['data'], $activo)){
+                            
+                            $_abm_contrato = new AbmContratos('', $_SESSION['id_usuario'], $_contratoBd -> getId_contrato(), $accion, fechaActual());
+                            
+                            $json['status'] = RepositorioAbmContratos::insertarAbmContratos($conexion,$_abm_contrato) ? 1 : 0;
+
+                        }
                     }
                 }
+                
             }
-            echo json_encode($alan);
 
+            echo json_encode($json);
+        break;
+        case 'form-mod-contract':
+            ControlSesion::sesion_iniciada();
+            $json['form'] = 'form-mod-contract';
+            $json['status'] = 0;
+            foreach($_POST as $key => $value){
+                $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
+            }
+            if($dataFront['contract-check'] !== null){
+                ControlSesion::datito($dataFront['contract-check']);
+            }
+            Conexion::abrir_conexion();
+            $conexion = Conexion::obtener_conexion();
+            Conexion::cerrar_conexion();
+            if(RepositorioContrato::contrato_existe_id($conexion, $dataFront['contract-check'])){
+                $json['status'] = 1;
+                $_contrato = RepositorioContrato::obtener_objContrato($conexion,$dataFront['contract-check']);
+                $json['mc-desc'] = $_contrato -> getCon_descripcion();
+                $json['mc-price'] = $_contrato -> getCon_precio();
+                $json['mc-max-users'] = $_contrato -> getCon_maxusuarios();
+                $json['mc-life'] = $_contrato -> getCon_duracionmeses();
+                $json['mc-active'] = $_contrato -> getCon_activo();
+            }
+            //----------------------------------------------
+            //-----------------------------------------------
+            if($dataFront['contract-check'] === null && isset($_SESSION['data']) && count($_POST) > 2){
+                $json['status'] = 1;
+                $_contratoBd = RepositorioContrato::obtener_objContrato($conexion, $_SESSION['data']);
+                
+                if($_contratoBd !== null){
+                    
+                    foreach($_POST as $key => $value){
+                        $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
+                    }
+                    
+                    $_validador = new ValidadorModificarContrato($_contratoBd, $dataFront['mc-desc'], $dataFront['mc-price'], $dataFront['mc-max-users'], $dataFront['mc-life'], $dataFront['mc-active'], $conexion);
+                    
+                    if($_validador -> existe_cambio()){
+                        
+                        if($_validador -> registro_valido()){
+
+                            $accion="MODIFICADO";
+                            $_contrato = new Contrato('', $_validador -> getDesc(), $_validador -> getPrecio(),$_validador -> getMaxUser(), $_validador -> getDuracionMeses(), $_validador -> getActivo());
+                            
+                            $contratoModify = RepositorioContrato::update_contrato_id($conexion, $_contratoBd -> getId_contrato(), $_contrato);
+                            if($contratoModify){
+
+                                $_abm_contrato = new AbmContratos('', $_SESSION['id_usuario'], $_contratoBd -> getId_contrato(), $accion, fechaActual());
+                                
+                                if(RepositorioAbmContratos::insertarAbmContratos($conexion, $_abm_contrato)){
+                                    
+                                    $json['status'] = 1;
+                                    
+                                }
+                            }
+                        }else{
+                            $json['status'] = 0;
+                        }
+
+                    }//cierra existe_cambio
+                    $err = array(
+                        'mc-desc' => $_validador -> getDesc(),
+                        'mc-price' => $_validador -> getPrecio(),
+                        'mc-max-users' => $_validador -> getMaxUser(),
+                        'mc-life' => $_validador -> getDuracionMeses(),
+                        'mc-active' => $_validador -> getActivo()
+                    );
+                    foreach($err as $key => $value){
+                        $json[$key] = $value;
+                    }
+                
+                }
+            }
+            echo json_encode($json);
+        break;
+        case 'form-check-contract':
+            $json['form'] = 'form-check-contract';
+            $json['status'] = 0;
+            $check = isset($_POST['contract-check']) && !empty($_POST['contract-check'])? $_POST['contract-check'] : null;
+            Conexion::abrir_conexion();
+            $conexion = Conexion::obtener_conexion();
+            Conexion::cerrar_conexion();
+            if(RepositorioContrato::contrato_existe_id($conexion, $check)){
+                
+                $json['status'] = 1;
+                $_contrato = RepositorioContrato::obtener_objContrato($conexion, $check);
+                
+                $json['cc-desc'] = $_contrato -> getCon_descripcion();
+                $json['cc-price'] = $_contrato -> getCon_precio();
+                $json['cc-max-users'] = $_contrato -> getCon_maxusuarios();
+                $json['cc-life'] = $_contrato -> getCon_duracionmeses();
+                $json['cc-active'] = $_contrato -> getCon_activo();
+
+            }
+            //---
+            if($check === null && isset($_SESSION['data']) && count($_POST) > 2){
+                $json['status'] = 1;
+                $_contratoBd = RepositorioContrato::obtener_objContrato($conexion, $_SESSION['data']);
+                
+                if($_contratoBd !== null){
+                    
+                    foreach($_POST as $key => $value){
+                        $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
+                    }
+                    $validador = new ValidadorModificarContratos($_empresaBd, $conexion, $dataFront['me-razon'], $dataFront['me-cuit'], 
+                    $dataFront['me-street'], $dataFront['me-number'], $dataFront['me-floor'], $dataFront['me-department'], 
+                    $dataFront['me-city'], $dataFront['me-country'], $dataFront['me-cp'], $dataFront['me-phone'], $dataFront['me-email'], 
+                    $dataFront['me-active'], $dataFront['me-contract']);
+
+                    if($validador -> existe_cambio()){
+                        
+                        if($validador -> registro_valido()){
+
+                            $accion="MODIFICADO";
+                            $_empresa = new Empresa('',$validador -> getrazonsocial(), $validador -> getcuit(),
+                            $validador -> getcalle(), $validador -> getaltura(), $validador -> getpiso(), $validador -> getdpto(),
+                            $validador -> getciudad(), $validador -> getpais(), $validador -> getcp(), $validador -> gettel(),
+                            $validador -> getemail(), $validador -> getactivo(), $validador -> getContrato_id());
+                            
+                            $empresaModify = RepositorioEmpresa:: update_empresa_id($conexion, $_empresaBd -> getId_empresa(), $_empresa);
+                            if($empresaModify){
+
+                                $_abm_empresa = new AbmEmpresas('', $_SESSION['id_usuario'], $_empresaBd -> getId_empresa(), $accion, fechaActual());
+                                
+                                if(RepositorioAbmEmpresas::insertarAbmEmpresas($conexion, $_abm_empresa)){
+                                    
+                                    if($_empresaBd -> getEM_Activo() == '0'){
+                                        emails::aviso_alta_empresa($_empresa);
+                                    }else{
+                                        emails::aviso_modificado_empresa($_empresa);
+                                    }
+                                    $json['status'] = 1;
+                                    
+                                }
+                            }
+                        }else{
+                            $json['status'] = 0;
+                        }
+
+                    }//cierra existe_cambio
+                    $err = array(
+                        'me-razon' => $validador -> getError_razonsocial(),
+                        'me-cuit' => $validador -> getError_cuit(),
+                        'me-street' => $validador -> getError_calle(),
+                        'me-number' => $validador -> getError_altura(),
+                        'me-floor' => $validador -> getError_piso(),
+                        'me-department' => $validador -> getError_dpto(),
+                        'me-city' => $validador -> getError_ciudad(),
+                        'me-country' => $validador -> getError_pais(),
+                        'me-cp' => $validador -> getError_cp(),
+                        'me-phone' => $validador -> getError_tel(),
+                        'me-email' => $validador -> getError_email(),
+                        'me-active' => $validador -> getError_activo(),
+                        'me-contract' => $validador -> getError_contrato_id()
+                    );
+                    foreach($err as $key => $value){
+                        $json[$key] = $value;
+                    }
+                
+                }
+            }
+
+            sleep(1);
+            echo json_encode($json);
         break;
         case 'form-new-empresa':
             ControlSesion::sesion_iniciada();
