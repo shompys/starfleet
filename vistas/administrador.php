@@ -23,9 +23,45 @@ if(!RepositorioAdministrador::verificar_rol(Conexion::obtener_conexion(), $_SESS
     Conexion::cerrar_conexion();
     Redireccion::redirigir(RUTA_INICIO);
 }
+
 $_typeContract = RepositorioContrato::obtener_todos_nombres_contratos(Conexion::obtener_conexion());
 $_typeEmpresas = RepositorioEmpresa::obtener_nombres_empresas(Conexion::obtener_conexion());
+$_empresaCombo = RepositorioEmpresa::empresa_id_razon(Conexion::obtener_conexion());
 
+$link = mysqli_connect(NOMBRE_SERVIDOR, NOMBRE_USUARIO, PASSWORD, NOMBRE_BD);
+
+$query = "SELECT u.id_usuario AS 'UID', u.us_nombre AS 'NOMBRE', u.us_apellido AS 'APELLIDO', u.us_usuario AS 'USUARIO', u.us_dni AS 'DNI', u.us_email AS 'EMAIL'
+        FROM usuarios u 
+        INNER JOIN empresas e ON u.empresa_id = e.id_empresa";
+
+        $result = mysqli_query($link, $query);
+ 
+        while($row = $result->fetch_assoc()){
+            $_usuarios[] = $row;
+        }
+    
+    $query = "SELECT id_contrato AS 'CID', con_precio AS 'PRECIO', con_maxusuarios AS 'MAX USUARIOS', con_duracionmeses AS 'MESES'
+    FROM contratos
+    ";
+    
+    $result = mysqli_query($link, $query);
+
+    while($row = $result->fetch_assoc()){
+
+        $_contratos[] = $row;
+    }
+    
+    $query = "SELECT e.id_empresa AS 'EID', e.em_razonsocial AS 'RAZON SOCIAL', e.em_email AS 'EMAIL' 
+    FROM empresas e 
+    INNER JOIN contratos c ON e.contrato_id = c.id_contrato";
+    
+    $result = mysqli_query($link, $query);
+
+    while($row = $result->fetch_assoc()){
+        
+        $_empresas[] = $row;
+    }
+   
 Conexion::cerrar_conexion();
 
 ?>
@@ -72,7 +108,7 @@ Conexion::cerrar_conexion();
                                 <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z"/>
                                 </svg>
                             </span>
-                            <div class="badge badge-danger badge-pill notification">15</div>
+                            <div class="badge badge-danger badge-pill notification">12</div>
                         </div>
                         <div id="configuracion">
                             <span class="icon">
@@ -121,10 +157,10 @@ Conexion::cerrar_conexion();
                             <li class="nav-item">
                                 <div class="nav-link text-muted" id="contratos">
                                     <span class="icon">
-                                        <svg width="1.4em" height="1.4em" viewBox="0 0 18 18" class="bi bi-bookmark-check" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                            <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                          </svg>
+                                        <svg width="1.4em" height="1.4em" viewBox="0 0 18 18" class="bi bi-bookmarks" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+                                        <path fill-rule="evenodd" d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+                                        </svg>
                                     </span>
                                     <span>Contratos</span>
                                 </div>
@@ -443,6 +479,7 @@ Conexion::cerrar_conexion();
                                                         <div class="form-group col-md-3">
                                                             <label>Usuario Activo</label>
                                                             <select class="form-control" name="rep-user-active">
+                                                                <option value="todos">Todos</option>
                                                                 <option value="1">Activo</option>
                                                                 <option value="0">Inactivo</option>
                                                             </select>
@@ -450,7 +487,7 @@ Conexion::cerrar_conexion();
                                                         <div class="form-group col-md-3">
                                                             <label>Empresa</label>
                                                             <select class="form-control" name="rep-user-business">
-                                                             <option>todas</option>   
+                                                            <option value="todas">Todas</option>   
                                                             <?php
                                                             
                                                             if(count($_typeEmpresas) >= 1){                                   
@@ -474,46 +511,28 @@ Conexion::cerrar_conexion();
                                                         </div>
                                                     </div>
                                                 </form>
-    
-                                                <table class="table table-sm">
+                                                            
+                                                <table class="table table-sm table-users">
                                                     <thead class="thead-dark">
                                                         <tr>
-                                                            <th scope="col">Id</th>
-                                                            <th scope="col">Dato1</th>
-                                                            <th scope="col">Dato2</th>
-                                                            <th scope="col">Dato3</th>
-                                                            <th scope="col">Dato4</th>
+                                                        <tr>
+                                                            <th scope="col">Uid</th>
+                                                            <th scope="col">Nombre</th>
+                                                            <th scope="col">Apellido</th>
+                                                            <th scope="col">Usuario</th>
+                                                            <th scope="col">DNI</th>
+                                                            <th scope="col">Correo electrónico</th>
+                                                        </tr>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>2</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>3</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>4</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
+                                                        <?php
+                                                        foreach($_usuarios as $v){
+
+                                                            echo  '<tr>' . '<td>' . $v['UID'] . '</td>' . '<td>' . $v['NOMBRE'] . '</td>' . '<td>' . $v['APELLIDO'] . '</td>' . '<td>' . $v['USUARIO'] . '</td>' . '<td>' . $v['DNI'] . '</td>' . '<td>' . $v['EMAIL'] . '</td>' . '</tr>';
+                                                            
+                                                        } 
+                                                        ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -524,19 +543,26 @@ Conexion::cerrar_conexion();
                                             <div class="form-height col-12 mt-3 text-dark">
                                                 <form class="form-rep-contract" autocomplete="off">
                                                     <input type="hidden" name="usersForm" value="form-rep-contract">
+                                                    <input type="hidden" name="reptype" value="Reporte de Contratos">
                                                     <div class="form-row">
                                                         <div class="form-group col-md-6">
                                                             <label>Tipo de Contrato</label>
                                                             
                                                             <select class="form-control" name="rep-contract-type">
+                                                            <option value="todos">Todos</option>
                                                             <?php
-                                                            
-                                                            if(count($_typeEmpresas) >= 1){                                   
-                                                                foreach($_typeContract as $v){
-                                                                    echo '<option>', $v['con_descripcion'], '</option>';
+                                                            if(count($_typeEmpresas) >= 1)
+                                                            {                                   
+                                                                foreach($_typeContract as $v)
+                                                                {
+                                                                    echo '<option>' . $v['con_descripcion'] . '</option>';
                                                                 }
-                                                            }else{                                    
-                                                            ?><option value="">Nulo</option><?php 
+                                                            }
+                                                            else
+                                                            {                                    
+                                                            ?>
+                                                            <option value="">Nulo</option>
+                                                            <?php 
                                                             }                                    
                                                             ?>
                                                             </select>
@@ -552,45 +578,22 @@ Conexion::cerrar_conexion();
                                                     </div>
                                                 </form>
     
-                                                <table class="table table-sm">
+                                                <table class="table table-sm table-contracts">
                                                     <thead class="thead-dark">
                                                         <tr>
-                                                            <th scope="col">Id</th>
-                                                            <th scope="col">Dato1</th>
-                                                            <th scope="col">Dato2</th>
-                                                            <th scope="col">Dato3</th>
-                                                            <th scope="col">Dato4</th>
+                                                            <th scope="col">CId</th>
+                                                            <th scope="col">Precio</th>
+                                                            <th scope="col">Max Usuarios</th>
+                                                            <th scope="col">Meses</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>2</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>3</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>4</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
+                                                        <?php
+                                                            foreach($_contratos as $v){
+                                                                echo '<tr>' . '<td>' . $v['CID'] . '</td>' . '<td>' . $v['PRECIO'] . '</td>' . '<td>' . $v['MAX USUARIOS'] . '</td>' . '<td>' . $v['MESES'] . '</td>' . '</tr>';
+                                                            }
+                                                        ?>
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -601,25 +604,31 @@ Conexion::cerrar_conexion();
                                             <div class="form-height col-12 mt-3 text-dark">
                                                 <form class="form-rep-business" autocomplete="off">
                                                     <input type="hidden" name="usersForm" value="form-rep-business">
+                                                    <input type="hidden" name="reptype" value="Reporte de Empresas">
                                                     <div class="form-row">
                                                         <div class="form-group col-md-3">
-                                                            <label>Empresa Activo</label>
+                                                            <label>Empresa Activa</label>
                                                             <select class="form-control" name="rep-business-active">
-                                                                <option value="1">Activo</option>
-                                                                <option value="0">Inactivo</option>
+                                                                <option value="todas">Todas</option>
+                                                                <option value="1">Activa</option>
+                                                                <option value="0">Inactiva</option>
                                                             </select>
                                                         </div>
                                                         <div class="form-group col-md-3">
                                                             <label>Tipo de Contrato</label>
                                                             <select class="form-control" name="rep-business-contract">
-                                                                <option>todas</option>
+                                                                <option value="todos">Todos</option>
                                                                 <?php
                                                                 if(count($_typeContract) >= 1){        
                                                                     foreach($_typeContract as $v){
-                                                                        echo '<option>', $v['con_descripcion'], '</option>';
+                                                                        echo '<option value="' . $v['id_contrato'] . '">' . $v['con_descripcion'] . '</option>';
                                                                     }
-                                                                }else{
-                                                                ?><option value="">Nulo</option><?php
+                                                                }
+                                                                else
+                                                                {
+                                                                ?>
+                                                                <option value="">Nulo</option>
+                                                                <?php
                                                                 }
                                                                 ?>
                                                             </select>
@@ -635,45 +644,22 @@ Conexion::cerrar_conexion();
                                                     </div>
                                                 </form>
     
-                                                <table class="table table-sm">
+                                                <table class="table table-sm table-business">
                                                     <thead class="thead-dark">
                                                         <tr>
-                                                            <th scope="col">Id</th>
-                                                            <th scope="col">Dato1</th>
-                                                            <th scope="col">Dato2</th>
-                                                            <th scope="col">Dato3</th>
-                                                            <th scope="col">Dato4</th>
+                                                            <th scope="col">EId</th>
+                                                            <th scope="col">Razon Social</th>
+                                                            <th scope="col">Email</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>2</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>3</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>4</td>
-                                                            <td>a</td>
-                                                            <td>b</td>
-                                                            <td>c</td>
-                                                            <td>d</td>
-                                                        </tr>
+                                                        <?php
+
+                                                        foreach($_empresas as $v){
+                                                        echo '<tr>' . '<td>' . $v['EID'] . '</td>' . '<td>' . $v['RAZON SOCIAL'] . '</td>'  . '<td>' . $v['EMAIL'] . '</td>' .  '</tr>';
+                                                        }
+
+                                                        ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -851,11 +837,24 @@ Conexion::cerrar_conexion();
                                                     <div class="form-row">
                                                         <div class="form-group col-md-4">
                                                             <label>Código Empresa</label>
-                                                            <input type="text" name="nu-companyid" class="form-control">
+                                                            <!--<input type="text" name="nu-companyid" class="form-control">-->
+                                                            <select class="form-control" name="nu-companyid">
+                                                                <option>Seleccionar</option>   
+                                                                <?php
+                                                                if(count($_empresaCombo) >= 1)
+                                                                {                                   
+                                                                    foreach($_empresaCombo as $v)
+                                                                    {
+                                                                        echo '<option value="' . $v['id_empresa'] . '" data-company="' . $v['em_razonsocial'] . '">' . $v['id_empresa'] . '</option>';
+                                                                        //echo '<option value="' . $v['em_razonsocial'] . '">' . $v['id_empresa'] . '</option>';
+                                                                    }
+                                                                }                                   
+                                                                ?>
+                                                            </select>
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label>Empresa</label>
-                                                            <input type="text" name="nu-company" class="form-control">
+                                                            <input type="text" name="nu-company" class="form-control" readonly>
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label>Usuario Activo</label>
@@ -1149,11 +1148,23 @@ Conexion::cerrar_conexion();
                                                     <div class="form-row">
                                                         <div class="form-group col-md-4">
                                                             <label>Código Empresa</label>
-                                                            <input type="text" name="mu-companyid" class="form-control">
+                                                            <!--<input type="text" name="mu-companyid" class="form-control">-->
+                                                            <select class="form-control" name="mu-companyid">
+                                                                <option>Seleccionar</option>   
+                                                                <?php
+                                                                if(count($_empresaCombo) >= 1)
+                                                                {                                   
+                                                                    foreach($_empresaCombo as $v)
+                                                                    {
+                                                                        echo '<option value="' . $v['id_empresa'] . '" data-company="' . $v['em_razonsocial'] . '">' . $v['id_empresa'] . '</option>';
+                                                                    }
+                                                                }                                   
+                                                                ?>
+                                                            </select>
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label>Empresa</label>
-                                                            <input type="text" name="mu-company" class="form-control">
+                                                            <input type="text" name="mu-company" class="form-control" readonly>
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label>Usuario Activo</label>
@@ -2155,11 +2166,12 @@ Conexion::cerrar_conexion();
                 {
                     $('.' + form).find('[name="contract-check"]').val('');
                 }
+
                 $.ajax({
-                    url : 'scripts/validateForm.php',//'ajax.php', // PHP con las funciones ajax
+                    url : 'scripts/validateForm.php',
                     type: 'POST',
                     dataType: 'json',
-                    data: 'usersForm=' + form + '&' + $('.' + form).serialize(), // Datos del formulario
+                    data: 'usersForm=' + form + '&' + $('.' + form).serialize(),
                     beforeSend: function(){},
                     success:  function(data){
                         
@@ -2210,12 +2222,10 @@ Conexion::cerrar_conexion();
 
             $('[name="dni-check"]').on('keyup', function(e){
 
-                //var form = $($(this)[0].form).find('[name="usersForm"]').val();
                 var form = $($(this)[0].form).attr('class');
-                //console.log(form);
 
                 $.ajax({
-                    url : 'scripts/validateForm.php',//'user.php',
+                    url : 'scripts/validateForm.php',
                     type: 'POST',
                     dataType: 'json',
                     data: 'usersForm=' + form + '&' + $(this).serialize(),
@@ -2258,12 +2268,10 @@ Conexion::cerrar_conexion();
 
             $('[name="empresa-check"]').on('keyup', function(e){
 
-                //var form = $($(this)[0].form).find('[name="usersForm"]').val();
                 var form = $($(this)[0].form).attr('class');
-                //console.log(form);
 
                 $.ajax({
-                    url : 'scripts/validateForm.php',//'user.php',
+                    url : 'scripts/validateForm.php',
                     type: 'POST',
                     dataType: 'json',
                     data: 'usersForm=' + form + '&' + $(this).serialize(),
@@ -2303,55 +2311,53 @@ Conexion::cerrar_conexion();
 
                 return false;
             });
+
             $('[name="contract-check"]').on('keyup', function(e){
 
-            //var form = $($(this)[0].form).find('[name="usersForm"]').val();
-            var form = $($(this)[0].form).attr('class');
+                var form = $($(this)[0].form).attr('class');
 
-            //console.log
-            (form);
+                $.ajax({
+                    url : 'scripts/validateForm.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: 'usersForm=' + form + '&' + $(this).serialize(),
+                    success: function(data){
+                        
+                        if(data.status == 1)
+                        {
+                            $.map(data, function(v, k){
 
-            $.ajax({
-                url : 'scripts/validateForm.php',//'user.php',
-                type: 'POST',
-                dataType: 'json',
-                data: 'usersForm=' + form + '&' + $(this).serialize(),
-                success: function(data){
-                    
-                    if(data.status == 1)
-                    {
-                        $.map(data, function(v, k){
+                                $('.' + data.form).find('input[type="checkbox"]').each(function(){
+                                    if($(this).prop('name') == k)
+                                    {
+                                        $('[name="' + k + '"]').prop('checked', (v == 1 ? true : false));
+                                    }
+                                });
 
-                            $('.' + data.form).find('input[type="checkbox"]').each(function(){
-                                if($(this).prop('name') == k)
-                                {
-                                    $('[name="' + k + '"]').prop('checked', (v == 1 ? true : false));
-                                }
+                                $('.' + data.form).find('select').each(function(){
+                                    if($(this).prop('name') == k)
+                                    {
+                                        $('select[name="' + k + '"]').find('option[value="' + v + '"]').prop('selected', 'selected');
+                                    }
+                                });
+
+                                $('[name="' + k + '"]').val(v);
+
                             });
+                        }
+                        else
+                        {
+                            $.map(data, function(v, k){
+                                $('[name="' + k + '"]').val(v);
+                            }); 
+                        }
 
-                            $('.' + data.form).find('select').each(function(){
-                                if($(this).prop('name') == k)
-                                {
-                                    $('select[name="' + k + '"]').find('option[value="' + v + '"]').prop('selected', 'selected');
-                                }
-                            });
-
-                            $('[name="' + k + '"]').val(v);
-
-                        });
                     }
-                    else
-                    {
-                        $.map(data, function(v, k){
-                            $('[name="' + k + '"]').val(v);
-                        }); 
-                    }
+                });
 
-                }
+                return false;
             });
 
-            return false;
-            });
             $('.reset').on('click', function(){
 
                 var form = $($(this)[0].form).attr('class');
@@ -2401,7 +2407,130 @@ Conexion::cerrar_conexion();
 
                 window.location.href = 'reporteador/reporte.php?gen=PDF&' + args;
                 return false;
-            });           
+            });
+
+            $('.form-rep-user').on('change', function(){
+
+                $.ajax({
+                    url : 'reporteador/reporte2.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    beforeSend: function(){
+                        $('.table-users tbody').empty();
+                    },
+                    success: function(data){
+
+                        if(data.length > 0)
+                        {
+                            $.each(data, function(i, d){
+                                $('.table-users').append('<tr><td>' + d.UID + '</td><td>' + d.NOMBRE + '</td><td>' + d.APELLIDO + '</td><td>' + d.USUARIO + '</td><td>' + d.DNI + '</td><td>' + d.EMAIL + '</td></tr>');
+                            });
+                        }
+                        else
+                        {
+                            $('.table-users').append('<tr><td colspan="6" style="text-align: center;">Sin resultados</td></tr>');
+
+                        }
+
+                    }
+                });
+
+                return false;
+
+            });
+
+            $('.form-rep-contract').on('change', function(){
+
+                $.ajax({
+                    url : 'reporteador/reporte2.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    beforeSend: function(){
+                        $('.table-contracts tbody').empty();
+                    },
+                    success: function(data){
+
+                        if(data.length > 0)
+                        {
+                            $.each(data, function(i, d){
+                                $('.table-contracts').append('<tr><td>' + d.CID + '</td><td>' + d.PRECIO + '</td><td>' + d.MAXUSUARIOS + '</td><td>' + d.MESES + '</td></tr>');
+                            });
+                        }
+                        else
+                        {
+                            $('.table-contracts').append('<tr><td colspan="6" style="text-align: center;">Sin resultados</td></tr>');
+
+                        }
+
+                    }
+                });
+
+                return false;
+
+            });
+
+            $('.form-rep-business').on('change', function(){
+
+                $.ajax({
+                    url : 'reporteador/reporte2.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    beforeSend: function(){
+                        $('.table-business tbody').empty();
+                    },
+                    success: function(data){
+
+                        if(data.length > 0)
+                        {
+                            $.each(data, function(i, d){
+                                $('.table-business').append('<tr><td>' + d.EID + '</td><td>' + d.RAZONSOCIAL + '</td><td>' + d.EMAIL + '</td></tr>');
+                            });
+                        }
+                        else
+                        {
+                            $('.table-business').append('<tr><td colspan="6" style="text-align: center;">Sin resultados</td></tr>');
+
+                        }
+
+                    }
+                });
+
+                return false;
+
+            });
+            
+            $('[name="nu-companyid"]').on('change', function(){
+
+                if($(this).val() !== 'Seleccionar')
+                {
+                    var company = $('[name="nu-companyid"]').find('option[value="' + $(this).val() + '"]').data().company;
+                    $('[name="nu-company"]').val(company);
+                }
+                else
+                {
+                    $('[name="nu-company"]').val('');
+                }
+                return false;
+
+            });
+
+            $('[name="mu-companyid"]').on('change', function(){
+
+                if($(this).val() !== 'Seleccionar')
+                {
+                    var company = $('[name="mu-companyid"]').find('option[value="' + $(this).val() + '"]').data().company;
+                    $('[name="mu-company"]').val(company);
+                }
+                else
+                {
+                    $('[name="mu-company"]').val('');
+                }
+                return false;
+                
+            });
 
         });    
     </script>

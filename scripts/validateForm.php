@@ -370,73 +370,6 @@ header('Content-Type: application/json');
                 $json['cc-active'] = $_contrato -> getCon_activo();
 
             }
-            //---
-            if($check === null && isset($_SESSION['data']) && count($_POST) > 2){
-                $json['status'] = 1;
-                $_contratoBd = RepositorioContrato::obtener_objContrato($conexion, $_SESSION['data']);
-                
-                if($_contratoBd !== null){
-                    
-                    foreach($_POST as $key => $value){
-                        $dataFront[$key] = isset($value) && !empty($value) ? $value : null;
-                    }
-                    $validador = new ValidadorModificarContratos($_empresaBd, $conexion, $dataFront['me-razon'], $dataFront['me-cuit'], 
-                    $dataFront['me-street'], $dataFront['me-number'], $dataFront['me-floor'], $dataFront['me-department'], 
-                    $dataFront['me-city'], $dataFront['me-country'], $dataFront['me-cp'], $dataFront['me-phone'], $dataFront['me-email'], 
-                    $dataFront['me-active'], $dataFront['me-contract']);
-
-                    if($validador -> existe_cambio()){
-                        
-                        if($validador -> registro_valido()){
-
-                            $accion="MODIFICADO";
-                            $_empresa = new Empresa('',$validador -> getrazonsocial(), $validador -> getcuit(),
-                            $validador -> getcalle(), $validador -> getaltura(), $validador -> getpiso(), $validador -> getdpto(),
-                            $validador -> getciudad(), $validador -> getpais(), $validador -> getcp(), $validador -> gettel(),
-                            $validador -> getemail(), $validador -> getactivo(), $validador -> getContrato_id());
-                            
-                            $empresaModify = RepositorioEmpresa:: update_empresa_id($conexion, $_empresaBd -> getId_empresa(), $_empresa);
-                            if($empresaModify){
-
-                                $_abm_empresa = new AbmEmpresas('', $_SESSION['id_usuario'], $_empresaBd -> getId_empresa(), $accion, fechaActual());
-                                
-                                if(RepositorioAbmEmpresas::insertarAbmEmpresas($conexion, $_abm_empresa)){
-                                    
-                                    if($_empresaBd -> getEM_Activo() == '0'){
-                                        emails::aviso_alta_empresa($_empresa);
-                                    }else{
-                                        emails::aviso_modificado_empresa($_empresa);
-                                    }
-                                    $json['status'] = 1;
-                                    
-                                }
-                            }
-                        }else{
-                            $json['status'] = 0;
-                        }
-
-                    }//cierra existe_cambio
-                    $err = array(
-                        'me-razon' => $validador -> getError_razonsocial(),
-                        'me-cuit' => $validador -> getError_cuit(),
-                        'me-street' => $validador -> getError_calle(),
-                        'me-number' => $validador -> getError_altura(),
-                        'me-floor' => $validador -> getError_piso(),
-                        'me-department' => $validador -> getError_dpto(),
-                        'me-city' => $validador -> getError_ciudad(),
-                        'me-country' => $validador -> getError_pais(),
-                        'me-cp' => $validador -> getError_cp(),
-                        'me-phone' => $validador -> getError_tel(),
-                        'me-email' => $validador -> getError_email(),
-                        'me-active' => $validador -> getError_activo(),
-                        'me-contract' => $validador -> getError_contrato_id()
-                    );
-                    foreach($err as $key => $value){
-                        $json[$key] = $value;
-                    }
-                
-                }
-            }
 
             sleep(1);
             echo json_encode($json);
@@ -655,6 +588,37 @@ header('Content-Type: application/json');
 
             echo json_encode($json);
 
+        break;
+        case 'form-check-empresa':
+            $json['form'] = 'form-check-empresa';
+            $json['status'] = 0;
+            $check = isset($_POST['empresa-check']) && !empty($_POST['empresa-check'])? $_POST['empresa-check'] : null;
+            Conexion::abrir_conexion();
+            $conexion = Conexion::obtener_conexion();
+            Conexion::cerrar_conexion();
+            if(RepositorioEmpresa::razonSocialExiste($conexion, $check)){
+                
+                $json['status'] = 1;
+                $_empresa = RepositorioEmpresa::obtener_objEmpresa($conexion, $check);
+                
+                $json['ce-razon'] = $_empresa -> getEm_razonsocial();
+                $json['ce-cuit'] = $_empresa -> getEm_cuit();
+                $json['ce-street'] = $_empresa -> getEm_calle();
+                $json['ce-number'] = $_empresa -> getEm_altura();
+                $json['ce-floor'] = $_empresa -> getEm_piso();
+                $json['ce-department'] = $_empresa -> getEm_dpto();
+                $json['ce-city'] = $_empresa -> getEm_ciudad();
+                $json['ce-country'] = $_empresa -> getEm_pais();
+                $json['ce-cp'] = $_empresa -> getEm_cp();
+                $json['ce-phone'] = $_empresa -> getEm_tel();
+                $json['ce-email'] = $_empresa -> getEm_email();
+                $json['ce-active'] = $_empresa -> getEm_activo();
+                $json['ce-contract'] = $_empresa -> getContrato_id();
+
+            }
+
+            sleep(1);
+            echo json_encode($json);
         break;
         case 'form-new-user':
             ControlSesion::sesion_iniciada();

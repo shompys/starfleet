@@ -465,4 +465,27 @@ class RepositorioEmpresa{
         }
         return $obj;
     }
+    public static function empresa_id_razon($conexion){ 
+        $empresa = null;
+        
+        if(isset($conexion)){
+            try{
+                $sql= "SELECT id_empresa, em_razonsocial FROM empresas";
+                $sentencia = $conexion -> prepare($sql);
+                $sentencia -> bindParam(':razon', $razon, PDO::PARAM_STR);
+                $sentencia -> execute();
+                $arr = $sentencia -> fetchAll();
+                
+                if(!empty($arr)){
+                    foreach($arr as $k => $v){
+                        $empresa[$k] = $v;
+                    }
+                }
+            }catch(PDOException $ex){
+                print 'ERROR' . $ex -> getMessage();
+            }
+
+        }
+        return $empresa;
+    }
 }
