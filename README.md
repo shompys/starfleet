@@ -1,9 +1,23 @@
-Hoy es 27/10/2020.
+### 27/10/2020.
 
-Bueno para poner en contexto este proyecto es un sitio web que estamos realizando entre tres personas para presentarlo como trabajo final en una tecnicatura de analisis de sistemas.
+- Trabajo final para tecnicatura de análisis de sistemas.
 
-La idea del sitio web se basa en brindar un servicio de gestion de datos sobre logistica y transportes de una empresa.
+- La idea del sitio web se basa en brindar un servicio de gestion de datos sobre logistica y transportes para empresas.
 
--La empresa adquiere el servicio, se le da acceso a cierta cantidad de usuarios con la posibilidad de otorgar roles según necesidad, para la manipulacion del ABM de datos por modulos.
+- Las empresas adquiere el servicio, se le da acceso a cierta cantidad de usuarios con la posibilidad de otorgar roles según necesidad, para la manipulacion del ABM de datos por modulos.
 
-Tenemos el sistema online en donde estamos actualmente testeando cada cambio que vamos realizando: https://starfleet.company/profliendro
+- Creación cruda sin conocimientos básicos de las buenas practicas y/o frameworks.
+
+- Uso de javaScript con Jquery a la vieja escuela.
+
+- No se usaron empaquetadores como webpack o librerias que minifiquen o transpilen código.
+
+- La unica implementación externa Boostrap.
+
+- PHP vanilla reinventando la rueda y resolviendo cada problema espontaneamente con el conocimiento básico de POO.
+
+- Proyecto que dejo mucho conocimiento.
+
+- No intentes esto en casa.
+
+
